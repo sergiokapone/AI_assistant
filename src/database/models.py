@@ -1,5 +1,5 @@
-from sqlalchemy import String
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy import ForeignKey, String, Text
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
 class Base(DeclarativeBase):
@@ -9,5 +9,16 @@ class Base(DeclarativeBase):
 class User(Base):
     __tablename__ = "users"
 
-    user_id: Mapped[int] = mapped_column(primary_key=True, unique=True)
+    id: Mapped[int] = mapped_column(primary_key=True, unique=True)
     username: Mapped[str] = mapped_column(String(32), unique=True)
+    questions: Mapped[list["Question"]] = relationship(back_populates="user")
+
+
+class Question(Base):
+    __tablename__ = "question"
+
+    id: Mapped[int] = mapped_column(primary_key=True, unique=True)
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id"),
+    )
+    question_text: Mapped[str] = mapped_column(Text)
