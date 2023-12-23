@@ -1,12 +1,22 @@
 version: "3"
 
 services:
+
   api:
     container_name: fastapi_server
     build: server/.
     command: "poetry run uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload"
     ports:
       - "8000:8000"
+    networks:
+      - AI_assistant
+
+  app:
+    container_name: streamlit_app
+    build: client/.
+    command: "streamlit run --server.port 8001 --server.enableCORS false src/app.py"
+    ports:
+      - "8001:8001"
     networks:
       - AI_assistant
 
