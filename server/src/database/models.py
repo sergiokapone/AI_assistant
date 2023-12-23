@@ -15,7 +15,7 @@ class User(Base):
 
 
 class Question(Base):
-    __tablename__ = "question"
+    __tablename__ = "questions"
 
     id: Mapped[int] = mapped_column(primary_key=True, unique=True)
     user_id: Mapped[int] = mapped_column(
