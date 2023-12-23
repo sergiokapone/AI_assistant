@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "client"
+version = "0.1.0"
+description = "Client for chat with AI"
+authors = ["sergiokapone <sergiy.ponomarenko@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+streamlit = "^1.29.0"
+protobuf = "3.20.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
