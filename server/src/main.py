@@ -7,6 +7,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import text
 
+from src.routes.chat import router as router_chat
+
 current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 app = FastAPI(
@@ -38,7 +40,7 @@ async def root():
     }
 
 
-@app.get(f"/{settings.api_prefix}/healthchecker", tags=["Root"])
+@app.get(f"/{settings.api_prefix}/healthchecker")
 async def healthchecker(session: AsyncSession = Depends(db_helper.session_dependency)):
     try:
         result = await session.execute(text("SELECT 1"))
@@ -58,6 +60,7 @@ async def healthchecker(session: AsyncSession = Depends(db_helper.session_depend
     except Exception as e:
         raise e
 
+app.include_router(router_chat)
 
 if __name__ == "__main__":
     import uvicorn
