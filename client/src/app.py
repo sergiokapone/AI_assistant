@@ -2,6 +2,7 @@
 
 import streamlit as st
 
+
 def main():
     st.title("Пример приложения с Streamlit")
 
@@ -13,6 +14,6 @@ def main():
     if submit_button:
         st.write(f"Привет, {name}!")
 
+
 if __name__ == "__main__":
     main()
-
