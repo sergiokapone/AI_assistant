@@ -26,13 +26,13 @@ def extract_text_from_pdf(pdf_sources: List[Union[str, bytes, tempfile.SpooledTe
         # Разбиваем текст на части
         text_parts = text_splitter.split_text(_pdf_text)
 
-        # db = chroma.from_documents(text_parts)
+        db = chroma.from_documents(text_parts)
         # Отправляем каждую часть в базу данных Chroma
-        # for i, part in enumerate(text_parts):
-        #     chroma.store_vector(f"pdf_part_{i}", part)
-        # print("The text of the PDF file has been successfully broken down and transferred to the Chroma database.")
+        for i, part in enumerate(text_parts):
+            chroma.store_vector(f"pdf_part_{i}", part)
+        print("The text of the PDF file has been successfully broken down and transferred to the Chroma database.")
 
-        # print(text_parts[0].page_content)
+        print(text_parts[0].page_content)
 
 
 if __name__ == "__main__":
