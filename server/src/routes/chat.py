@@ -8,6 +8,7 @@ from ..database.models import User
 from ..repository.chat import respond
 from ..schemas.chat import Response
 from ..services.auth import auth_service
+from ..services.pdf_extractor import pdf_extractor
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 
@@ -27,6 +28,6 @@ async def read_comments(
 async def create_upload_file(file: UploadFile = File()):
     pathlib.Path("uploads").mkdir(exist_ok=True)
     file_path = f"uploads/{file.filename}"
-    with open(file_path, "wb") as f:
-        f.write(await file.read())
+
+    pdf_extractor([file_path])
     return {"file_path": file_path}
