@@ -3,4 +3,5 @@
 .venv/
 .env
 __pycache__/
-model/
+/server/poetry.lock
+/server/pyproject.toml
