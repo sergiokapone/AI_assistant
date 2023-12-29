@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, UploadFile, status
-from src.repository.chat import respond
-from src.schemas.chat import Response
+
+from ..repository.chat import respond
+from ..schemas.chat import Response
 
 router = APIRouter(prefix="/chat", tags=["Comments"])
 
