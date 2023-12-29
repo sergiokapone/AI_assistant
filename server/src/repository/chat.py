@@ -5,8 +5,6 @@ from src.services.llmchain import Chain
 from ..database.models import Answer, Question, User
 from ..schemas.chat import Response
 
-API_KEY = "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"
-
 chain = Chain()
 
 
