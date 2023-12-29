@@ -1,6 +1,7 @@
 from langchain.chains import LLMChain
 from langchain.llms import HuggingFaceHub
-from langchain.prompts import PromptTemplate
+from src.services.llmchain import Chain
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..database.models import Answer, Question, User
@@ -24,7 +25,7 @@ async def respond(current_user: User, session: AsyncSession, instruction: str) -
     session.add(question)
     await session.commit()
 
-    response = llm_chain.predict(instruction=instruction).lstrip()
+    response = chain(instruction).lstrip()
 
     answer = Answer(
         question_id=question.id,
@@ -35,3 +36,4 @@ async def respond(current_user: User, session: AsyncSession, instruction: str) -
     await session.commit()
 
     return Response(string=response)
+
