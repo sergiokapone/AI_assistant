@@ -1,13 +1,15 @@
 from datetime import datetime
 
-from .database.config import settings
-from .database.db_helper import db_helper
+import uvicorn
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import text
 
-from src.routes.chat import router as router_chat
+from .database.config import settings
+from .database.db_helper import db_helper
+from .routes.auth import router as auth_router
+from .routes.chat import router as chat_router
 
 current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -15,6 +17,9 @@ app = FastAPI(
     debug=True,
     title="AI assistant",
 )
+
+app.include_router(auth_router, prefix=f"/{settings.api_prefix}")
+app.include_router(chat_router, prefix=f"/{settings.api_prefix}")
 
 # Настройка CORS
 app.add_middleware(
@@ -40,7 +45,7 @@ async def root():
     }
 
 
-@app.get(f"/{settings.api_prefix}/healthchecker")
+@app.get(f"/{settings.api_prefix}/healthchecker", tags=["Root"])
 async def healthchecker(session: AsyncSession = Depends(db_helper.session_dependency)):
     try:
         result = await session.execute(text("SELECT 1"))
@@ -60,10 +65,8 @@ async def healthchecker(session: AsyncSession = Depends(db_helper.session_depend
     except Exception as e:
         raise e
 
-app.include_router(router_chat)
 
 if __name__ == "__main__":
-    import uvicorn
-    HOST = "0.0.0.0"
+    HOST = "127.0.0.0"
     PORT = 8000
     uvicorn.run(app, host=HOST, port=PORT, reload=True)

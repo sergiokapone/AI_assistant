@@ -27,4 +27,4 @@ RUN poetry config virtualenvs.create false && \
 # Copy the rest of the application code
 COPY . /app/
 
-CMD streamlit run --server.port 8001 --server.enableCORS false src/app.py
+CMD poetry run streamlit run --server.port 8001 --server.enableCORS false src/app.py
