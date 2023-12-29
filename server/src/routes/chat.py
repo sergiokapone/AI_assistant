@@ -12,6 +12,7 @@ from ..services.auth import auth_service
 router = APIRouter(prefix="/chat", tags=["chat"])
 
 
+
 @router.get("/", response_model=Response)
 async def read_comments(
     instruction: str = "",
