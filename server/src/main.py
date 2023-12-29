@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import text
 
-from .database.config import settings
+from .config.settings import settings
 from .database.db_helper import db_helper
 from .routes.auth import router as auth_router
 from .routes.chat import router as chat_router

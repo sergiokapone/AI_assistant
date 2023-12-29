@@ -1,19 +1,19 @@
 import os
 import tempfile
-import chromadb
-import PyPDF2
+from typing import List, Union
 
-from typing import Union, List
-from langchain.vectorstores import Chroma
+import PyPDF2
 from langchain.text_splitter import CharacterTextSplitter
-from langchain_community.document_loaders import TextLoader
+from langchain.vectorstores import Chroma
 
 chroma = Chroma()
 # Chunking the text
 text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
 
 
-def extract_text_from_pdf(pdf_sources: List[Union[str, bytes, tempfile.SpooledTemporaryFile]]):
+def extract_text_from_pdf(
+    pdf_sources: List[Union[str, bytes, tempfile.SpooledTemporaryFile]],
+):
     for pdf_source in pdf_sources:
         reader = PyPDF2.PdfReader(pdf_source)
         _pdf_text = ""
@@ -46,8 +46,6 @@ if __name__ == "__main__":
         if not os.path.isfile(pdf_path):
             print("The specified file does not exist.")
             continue
-       
+
         extract_text_from_pdf([pdf_path])
         break
-
-
