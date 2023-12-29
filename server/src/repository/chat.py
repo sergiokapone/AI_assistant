@@ -1,9 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.services.llmchain import Chain
-
 from ..database.models import Answer, Question, User
 from ..schemas.chat import Response
+from ..services.llmchain import Chain
 
 chain = Chain()
 
