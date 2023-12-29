@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi import Depends, FastAPI, HTTPException, status, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import text
@@ -8,6 +8,7 @@ from sqlalchemy.sql import text
 from .database.config import settings
 from .database.db_helper import db_helper
 from .routes.chat import router as chat_router
+import uvicorn
 
 current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -62,10 +63,7 @@ async def healthchecker(session: AsyncSession = Depends(db_helper.session_depend
     except Exception as e:
         raise e
 
-
 if __name__ == "__main__":
-    import uvicorn
-
     HOST = "0.0.0.0"
     PORT = 8000
     uvicorn.run(app, host=HOST, port=PORT, reload=True)

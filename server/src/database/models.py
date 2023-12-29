@@ -1,10 +1,9 @@
-from sqlalchemy import ForeignKey, String, Text
+from sqlalchemy import ForeignKey, String, Text, DateTime,Column, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
-
+import datetime
 
 class Base(DeclarativeBase):
     pass
-
 
 class User(Base):
     __tablename__ = "users"
@@ -22,3 +21,4 @@ class Question(Base):
         ForeignKey("users.id"),
     )
     question_text: Mapped[str] = mapped_column(Text)
+    created: Mapped[datetime.datetime] = mapped_column(DateTime, default=func.now())
