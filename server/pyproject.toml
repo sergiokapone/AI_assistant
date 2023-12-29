@@ -17,6 +17,7 @@ alembic = "^1.13.1"
 langchain = "^0.0.352"
 huggingface-hub = "^0.20.1"
 llama-cpp-python = "^0.2.26"
+langdetect = "^1.0.9"
 
 [tool.poe.tasks]
 start = "uvicorn src.main:app --host 0.0.0.0 --port 8080 --reload"
