@@ -6,9 +6,9 @@ authors = ["sergiokapone <sergiy.ponomarenko@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.10"
 fastapi = {extras = ["all"], version = "^0.105.0"}
-sqlalchemy = "2.0.23"
+sqlalchemy = "^2.0.23"
 pydantic-settings = "^2.1.0"
 asyncpg = "^0.29.0"
 pydantic = "2.5.3"
@@ -16,11 +16,13 @@ aiosqlite = "^0.19.0"
 alembic = "^1.13.1"
 langchain = "^0.0.352"
 huggingface-hub = "^0.20.1"
+
 llama-cpp-python = "^0.2.26"
 langdetect = "^1.0.9"
 
 [tool.poe.tasks]
 start = "uvicorn src.main:app --host 0.0.0.0 --port 8080 --reload"
+
 
 [build-system]
 requires = ["poetry-core"]

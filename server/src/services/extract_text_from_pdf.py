@@ -30,6 +30,7 @@ def extract_text_from_pdf(pdf_sources: List[Union[str, bytes, tempfile.SpooledTe
 
 
 if __name__ == "__main__":
+
     # Спрашиваем у пользователя, сколько файлов он хотел бы загрузить
     num_files = int(input("How many PDF files would you like to upload? - "))
 
@@ -51,3 +52,4 @@ if __name__ == "__main__":
 
     # Вызываем функцию extract_text_from_pdf с указанными путями к PDF-файлам
     extract_text_from_pdf(pdf_paths)
+

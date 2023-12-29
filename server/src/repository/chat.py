@@ -1,15 +1,29 @@
-from langchain.llms import HuggingFaceHub
-from langchain.prompts import PromptTemplate
-from langchain.chains import LLMChain
-from src.schemas.chat import Response
-API_KEY = "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"
+from sqlalchemy.ext.asyncio import AsyncSession
 
-llm = HuggingFaceHub(repo_id="databricks/dolly-v2-3b", huggingfacehub_api_token = API_KEY)
-prompt = PromptTemplate(
-    input_variables=["instruction"],
-    template="{instruction}")
-llm_chain = LLMChain(llm=llm, prompt=prompt)
+from ..database.models import Answer, Question, User
+from ..schemas.chat import Response
+from ..services.llmchain import Chain
 
-def respond(instruction: str) -> str:
-    response = llm_chain.predict(instruction=instruction).lstrip()
+chain = Chain()
+
+
+async def respond(current_user: User, session: AsyncSession, instruction: str) -> str:
+    question = Question(
+        user_id=current_user.id,
+        question_text=instruction,
+    )
+
+    session.add(question)
+    await session.commit()
+
+    response = chain(instruction).lstrip()
+
+    answer = Answer(
+        question_id=question.id,
+        answer_text=response,
+    )
+
+    session.add(answer)
+    await session.commit()
+
     return Response(string=response)
