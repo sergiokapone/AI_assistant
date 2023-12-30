@@ -1,7 +1,0 @@
-.idea/
-.vscode/
-.venv/
-.env
-__pycache__/
-/server/poetry.lock
-/server/pyproject.toml
