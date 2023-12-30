@@ -3,14 +3,14 @@ from langchain.document_loaders import TextLoader
 from langchain.embeddings.sentence_transformer import SentenceTransformerEmbeddings
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import Chroma
-from langchain.llms import HuggingFaceHub
+
 from langchain.prompts import PromptTemplate
 from langchain.schema import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
-from langchain.docstore.document import Document
+
 
 # load the document and split it into chunk
-loader = TextLoader("server/src/services/output.txt")
+loader = TextLoader("D:\PYTHON\DataScience\AI_assistant\server\src\services\output.txt")
 documents = loader.load()
 
 template = """Use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer. Use three sentences maximum. Keep the answer as concise as possible. Always say "thanks for asking!" at the end of the answer. 
@@ -30,12 +30,8 @@ embedding_function = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2"
 # load it into Chroma
 db = Chroma.from_documents(docs, embedding_function)
 
-API_KEY = "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"
-llm_id = "databricks/dolly-v2-3b"
 transformer_id = "sentence-transformers/all-MiniLM-L6-v2"
 
-llm = HuggingFaceHub(repo_id=llm_id, huggingfacehub_api_token=API_KEY,
-                     model_kwargs={"temperature": 0.2, "max_length": 64})
 retriever = db.as_retriever()
 
 
@@ -46,7 +42,6 @@ def format_docs(docs):
 chain = (
         {"context": retriever | format_docs, "question": RunnablePassthrough()}
         | prompt
-        | llm
         | StrOutputParser()
 )
 
