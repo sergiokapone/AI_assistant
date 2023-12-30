@@ -1,11 +1,23 @@
 import streamlit as st
-
-# Заголовок формы
-st.title("Пример формы в Streamlit")
-
-def click_handler():
-    st.write("I'm clicked")
+from components import signin, signup
 
 
-st.button("Click here!", on_click=click_handler)
+def show_form(form_type):
+    if form_type == "Sign Up":
+        signup.signup_form()
 
+    elif form_type == "Sign In":
+        signin.signin_form()
+
+
+# Заголовок боковой панели
+st.sidebar.title("Выберите действие")
+
+# Создание боковой панели с кнопками "Sign In" и "Sign Up"
+selected_action = st.sidebar.radio("", ["Sign Up", "Sign In"])
+
+# Отображение формы в основном окне при выборе действия
+
+
+if __name__ == "__main__":
+    show_form(selected_action)

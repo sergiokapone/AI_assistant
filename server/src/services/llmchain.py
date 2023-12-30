@@ -6,17 +6,23 @@ from langchain_core.runnables import RunnablePassthrough
 from ..config.settings import settings
 
 API_KEY = settings.llm_api_key
+
 llm_id = "databricks/dolly-v2-3b"
+
 transformer_id = "sentence-transformers/all-MiniLM-L6-v2"
+
 template = """Use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer. Use three sentences maximum. Keep the answer as concise as possible.
 {context}
 Question: {question}
 Helpful Answer:"""
+
+
 prompt = PromptTemplate.from_template(template)
 
 template_no_context = """Answer the question at the end. Use three sentences maximum. Keep the answer as concise as possible.
 Question: {question}
 Helpful Answer:"""
+
 prompt_no_context = PromptTemplate.from_template(template_no_context)
 
 
@@ -25,7 +31,7 @@ class Chain:
         self.llm = HuggingFaceHub(
             repo_id=llm_id,
             huggingfacehub_api_token=API_KEY,
-            model_kwargs={"temperature": 0.2, "max_length": 64},
+            model_kwargs={"temperature": 0.2, "max_length": 255},
         )
         self.context = context
         self.hostory = history  # NYI

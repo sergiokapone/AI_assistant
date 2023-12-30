@@ -15,8 +15,8 @@ class UserSchema(BaseModel):
             "title": "User Schema",
             "description": "Schema for user registration data",
             "example": {
-                "username": "sergiokapone",
-                "email": "example@example.com",
+                "username": "moroz",
+                "email": "moroz@example.com",
                 "password": "qwer1234",
             },
         }
