@@ -8,6 +8,8 @@ USER_EXIST = "Email already exists"
 
 
 def signup_form() -> None:
+    st.image("./images/bot.PNG", width=500)
+
     st.title("Sign Up")
     st.header("Please fill out the form to sign up")
 
@@ -20,9 +22,9 @@ def signup_form() -> None:
     if st.button("Sign Up"):
         response = requests.post(url=sign_up_url, data=json.dumps(input))
         if response.status_code == 409:  ## already exists
-            with st.chat_message(name="assistant"):
+            with st.chat_message(name="assistant", avatar="./images/logo.PNG"):
                 st.write("User already registered. Please use Sign In page.")
 
         else:
-            with st.chat_message(name="assistant"):
+            with st.chat_message(name="assistant", avatar="./images/logo.PNG"):
                 st.write("User was succefully created.")
