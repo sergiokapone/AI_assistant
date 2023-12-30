@@ -20,6 +20,7 @@ uvicorn = "^0.25.0"
 passlib = "^1.7.4"
 pyjwt = "^2.8.0"
 bcrypt = "^4.1.2"
+streamlit = "^1.29.0"
 
 [build-system]
 requires = ["poetry-core"]
