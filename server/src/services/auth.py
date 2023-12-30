@@ -6,7 +6,7 @@ from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..database.config import settings
+from ..config.settings import settings
 from ..database.db_helper import db_helper
 from ..repository import users as repository_users
 
