@@ -7,13 +7,10 @@ import uuid
 from typing import Union, List
 
 import chromadb
-from chromadb.config import Settings
 
 # import
-from langchain.document_loaders import TextLoader
-from langchain.embeddings.sentence_transformer import SentenceTransformerEmbeddings
-from langchain.text_splitter import CharacterTextSplitter, RecursiveCharacterTextSplitter
-from langchain.vectorstores import Chroma
+from chromadb.config import Settings
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 
 # read only digital PDF book which more 1000 sings
@@ -29,16 +26,13 @@ def extract_text_from_pdf(pdf_sources: List[Union[str, bytes, tempfile.SpooledTe
         # print(f"text in the var: {cleaned_text}")
 
         # Try Chroma Client
-        # chroma_client = chromadb.Client()
+
         chroma_client = chromadb.PersistentClient(path="chromadb", settings=Settings(allow_reset=True))
         print(chroma_client.heartbeat())
-
-        # metadata_options = {"hnsw:space": "cosine"}  # You can change this to "ip" or "cosine" if needed
         new_collection_persistent = chroma_client.create_collection(name="collection_name_persistent",
-                                                                    metadata={"hnsw:space": "cosine"})
-        # This allows us to create a client that connects to the server
-        # collection = chroma_client.create_collection(name="cleaned_text_pdf", metadata=metadata_options)
-        print(new_collection_persistent)
+                                                                    metadata={"hnsw:space": "cosine"}
+                                                                    )
+        # print(new_collection_persistent)
 
         text_splitter = RecursiveCharacterTextSplitter(separators=["\n\n", "\n"], chunk_size=500, chunk_overlap=0)
         docs = text_splitter.split_text(cleaned_text_pdf)
