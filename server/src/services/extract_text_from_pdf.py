@@ -2,8 +2,17 @@ import os
 import tempfile
 import PyPDF2
 import re
+import uuid
 
 from typing import Union, List
+
+import chromadb
+
+# import
+from langchain.document_loaders import TextLoader
+from langchain.embeddings.sentence_transformer import SentenceTransformerEmbeddings
+from langchain.text_splitter import CharacterTextSplitter, RecursiveCharacterTextSplitter
+from langchain.vectorstores import Chroma
 
 
 # read only digital PDF book which more 1000 sings
@@ -18,22 +27,30 @@ def extract_text_from_pdf(pdf_sources: List[Union[str, bytes, tempfile.SpooledTe
         print(type(_pdf_text))
 
         # Очищаем текст от недопустимых символов и тегов
-        cleaned_text = re.sub(r'[\d/.]', '', _pdf_text)
+        cleaned_text_pdf = re.sub(r'[\d/.]', '', _pdf_text)
+        # print(f"text in the var: {cleaned_text}")
 
-        # Записываем полученный текст в текстовый файл
-        output_file = 'output.txt'
-        mode = 'a' if os.path.exists(output_file) else 'w'
-        with open(output_file, mode, encoding='utf-8') as file:
-            file.write(cleaned_text)
+        # Try Chroma Client
+        chroma_client = chromadb.Client()
+        metadata_options = {"hnsw:space": "cosine"}  # You can change this to "ip" or "cosine" if needed
+        # This allows us to create a client that connects to the server
+        collection = chroma_client.create_collection(name="cleaned_text_pdf", metadata=metadata_options)
+        print(collection)
 
-        print(f"Text from PDF file '{pdf_source}' has been written to 'output.txt'")
+        text_splitter = RecursiveCharacterTextSplitter(separators=["\n\n", "\n"], chunk_size=500, chunk_overlap=0)
+        docs = text_splitter.split_text(cleaned_text_pdf)
+        print(docs)
+        for doc in docs:
+            uuid_name = uuid.uuid1()
+            print("document for", uuid_name)
+            collection.add(ids=[str(uuid_name)], documents=doc)
+        print(chroma_client)
 
 
-if __name__ == "__main__":
-
+# C:/Users/User/Downloads/design-patterns-uk.pdf
+def get_to_pdf():
     # Спрашиваем у пользователя, сколько файлов он хотел бы загрузить
     num_files = int(input("How many PDF files would you like to upload? - "))
-
     pdf_paths = []
     # Просим пользователя ввести путь к каждому файлу
     for i in range(num_files):
@@ -53,3 +70,6 @@ if __name__ == "__main__":
     # Вызываем функцию extract_text_from_pdf с указанными путями к PDF-файлам
     extract_text_from_pdf(pdf_paths)
 
+
+if __name__ == "__main__":
+    get_to_pdf()
