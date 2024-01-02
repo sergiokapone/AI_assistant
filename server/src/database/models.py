@@ -18,7 +18,10 @@ class User(Base):
     created_at: Mapped[datetime.datetime] = mapped_column(
         "created_at", DateTime, default=func.now()
     )
-    questions: Mapped[list["Question"]] = relationship(back_populates="users")
+    user_questions: Mapped[list["Question"]] = relationship(back_populates="user")
+    user_uploaded_texts: Mapped[list["UploadedText"]] = relationship(
+        back_populates="user"
+    )
 
 
 class Question(Base):
@@ -31,9 +34,8 @@ class Question(Base):
     question_text: Mapped[str] = mapped_column(Text)
     created_at: Mapped[datetime.datetime] = mapped_column(DateTime, default=func.now())
 
-    users: Mapped[User] = relationship(back_populates="questions")
-
-    answers: Mapped[list["Answer"]] = relationship(back_populates="question")
+    user: Mapped[User] = relationship(back_populates="user_questions")
+    answers: Mapped["Answer"] = relationship(back_populates="question")
 
 
 class Answer(Base):
@@ -49,26 +51,20 @@ class Answer(Base):
     question: Mapped[Question] = relationship(back_populates="answers")
 
 
+class UploadedText(Base):
+    __tablename__ = "uploaded_text"
+
+    id: Mapped[int] = mapped_column(primary_key=True, unique=True)
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id"),
+    )
+    uploaded_text: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[datetime.datetime] = mapped_column(DateTime, default=func.now())
+
+    user: Mapped[User] = relationship(back_populates="user_uploaded_texts")
+
+
 class BlacklistToken(Base):
-    """
-    BlacklistToken Model
-
-    This model represents a blacklisted token in the system, which is used to prevent token reuse.
-
-    :param int id: The unique identifier for the blacklisted token (primary key).
-    :param str token: The token string that has been blacklisted (unique and not nullable).
-    :param datetime blacklisted_on: The date and time when the token was blacklisted (default is the current time).
-
-    **Example Usage:**
-
-    .. code-block:: python
-
-        blacklisted_token = BlacklistToken(
-            token="your_token_string_here"
-        )
-
-    """
-
     __tablename__ = "blacklist_tokens"
 
     id: Mapped[int] = mapped_column(primary_key=True)

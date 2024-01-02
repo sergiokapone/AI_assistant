@@ -1,51 +1,75 @@
 import os
 import tempfile
-from typing import List, Union
-
 import PyPDF2
-from langchain.text_splitter import CharacterTextSplitter
-from langchain.vectorstores import Chroma
+import re
+import uuid
 
-chroma = Chroma()
-# Chunking the text
-text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+from typing import Union, List
+
+import chromadb
+
+# import
+from chromadb.config import Settings
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 
-def extract_text_from_pdf(
-    pdf_sources: List[Union[str, bytes, tempfile.SpooledTemporaryFile]],
-):
+# read only digital PDF book which more 1000 sings
+def extract_text_from_pdf(pdf_sources: List[Union[str, bytes, tempfile.SpooledTemporaryFile]]):
     for pdf_source in pdf_sources:
         reader = PyPDF2.PdfReader(pdf_source)
         _pdf_text = ""
-        page_number = 0
 
         for page in reader.pages:
-            page_number += 1
-            _pdf_text += page.extract_text() + f"\nPage Number: {page_number}"
+            _pdf_text += page.extract_text()
+        # Очищаем текст от недопустимых символов и тегов
+        cleaned_text_pdf = re.sub(r'[\d/.]', '', _pdf_text)
+        # print(f"text in the var: {cleaned_text}")
 
-        # Разбиваем текст на части
-        text_parts = text_splitter.split_text(_pdf_text)
+        # Try Chroma Client
 
-        # db = chroma.from_documents(text_parts)
-        # Отправляем каждую часть в базу данных Chroma
-        # for i, part in enumerate(text_parts):
-        #     chroma.store_vector(f"pdf_part_{i}", part)
-        # print("The text of the PDF file has been successfully broken down and transferred to the Chroma database.")
+        chroma_client = chromadb.PersistentClient(path="../../.chromadb", settings=Settings(allow_reset=True))
+        print(chroma_client.heartbeat())
+        # Генерация уникального имени для коллекции
+        collection_name = str(uuid.uuid4())
+        new_collection_persistent = chroma_client.create_collection(name=collection_name,
+                                                                    metadata={"hnsw:space": "cosine"}
+                                                                    )
+        print(new_collection_persistent)
 
-        # print(text_parts[0].page_content)
+        text_splitter = RecursiveCharacterTextSplitter(separators=["\n\n", "\n"], chunk_size=1000, chunk_overlap=20)
+        docs = text_splitter.split_text(cleaned_text_pdf)
+        print(docs)
+        for doc in docs:
+            uuid_name = uuid.uuid1()
+            print("document for", uuid_name)
+            new_collection_persistent.add(ids=[str(uuid_name)], documents=doc)
+        print(new_collection_persistent)
+
+
+# C:/Users/User/Downloads/cannon-2023-predicting-conversion-to-psychosis-using-machine-learning-are-we-there-yet.pdf
+# C:/Users/User/Downloads/design-patterns-uk.pdf
+def get_to_pdf():
+    # Спрашиваем у пользователя, сколько файлов он хотел бы загрузить
+    num_files = int(input("How many PDF files would you like to upload? - "))
+    pdf_paths = []
+    # Просим пользователя ввести путь к каждому файлу
+    for i in range(num_files):
+        while True:
+            pdf_path = input(f"Please enter full path to PDF #{i + 1}: ")
+            # Проверяем, является ли указанный путь файлом PDF
+            if not pdf_path.lower().endswith(".pdf"):
+                print("!!! Specified file is not a PDF file.")
+                continue
+            # Проверяем, существует ли указанный файл
+            if not os.path.isfile(pdf_path):
+                print("!!! The specified file does not exist.")
+                continue
+            break
+        pdf_paths.append(pdf_path)
+
+    # Вызываем функцию extract_text_from_pdf с указанными путями к PDF-файлам
+    extract_text_from_pdf(pdf_paths)
 
 
 if __name__ == "__main__":
-    while True:
-        # example_path = "D:\PYTHON\DataScience\TP_DS_23_tg1\AI_assistant\server\src\services\design-patterns-uk.pdf"
-        pdf_path = input("Please enter path to PDF: ")
-        if not pdf_path.lower().endswith(".pdf"):
-            print("Specified file is not a file PDF.")
-            continue
-
-        if not os.path.isfile(pdf_path):
-            print("The specified file does not exist.")
-            continue
-
-        extract_text_from_pdf([pdf_path])
-        break
+    get_to_pdf()

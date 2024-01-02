@@ -1,7 +1,7 @@
 import asyncio
 from logging.config import fileConfig
 
-from database.config import settings as app_config
+from config.settings import settings as app_config
 from database.models import Base
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
