@@ -4,29 +4,35 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="29773c5f-378e-4dff-b5ad-f6e9e9a3f5bd" name="Changes" comment="" />
+    <list default="true" id="c3351974-8701-43e6-9f0c-344ce959e662" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/routes/upload.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/routes/upload.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/schemas/upload.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/schemas/upload.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
-  </component>
-  <component name="ProjectId" id="2a8DpjdgmstuxuVfYZLKSQCTApy" />
+  <component name="ProjectId" id="2aJ9kh0hGyUYgCH6cP3T53tdhBw" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
-    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/PYTHON/jobs/LLM-skincare&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   }
 }</component>
@@ -61,11 +67,11 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="29773c5f-378e-4dff-b5ad-f6e9e9a3f5bd" name="Changes" comment="" />
-      <created>1703691496983</created>
+      <changelist id="c3351974-8701-43e6-9f0c-344ce959e662" name="Changes" comment="" />
+      <created>1704025964593</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1703691496983</updated>
+      <updated>1704025964593</updated>
     </task>
     <servers />
   </component>

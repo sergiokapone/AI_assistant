@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
 
 
-class Response(BaseModel):
+class UploadPDFSchema(BaseModel):
     string: str = Field()
