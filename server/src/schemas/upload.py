@@ -1,5 +1,9 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 
 
-class UploadPDFSchema(BaseModel):
-    string: str = Field()
+class UploadSchema(BaseModel):
+    name: str
+    string: Field()
+    description: str
+    upload: input("-->")
+
