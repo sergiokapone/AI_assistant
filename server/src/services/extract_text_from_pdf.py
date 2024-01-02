@@ -27,14 +27,16 @@ def extract_text_from_pdf(pdf_sources: List[Union[str, bytes, tempfile.SpooledTe
 
         # Try Chroma Client
 
-        chroma_client = chromadb.PersistentClient(path="chromadb", settings=Settings(allow_reset=True))
+        chroma_client = chromadb.PersistentClient(path="../../.chromadb", settings=Settings(allow_reset=True))
         print(chroma_client.heartbeat())
-        new_collection_persistent = chroma_client.create_collection(name="collection_name_persistent",
+        # Генерация уникального имени для коллекции
+        collection_name = str(uuid.uuid4())
+        new_collection_persistent = chroma_client.create_collection(name=collection_name,
                                                                     metadata={"hnsw:space": "cosine"}
                                                                     )
-        # print(new_collection_persistent)
+        print(new_collection_persistent)
 
-        text_splitter = RecursiveCharacterTextSplitter(separators=["\n\n", "\n"], chunk_size=500, chunk_overlap=0)
+        text_splitter = RecursiveCharacterTextSplitter(separators=["\n\n", "\n"], chunk_size=1000, chunk_overlap=20)
         docs = text_splitter.split_text(cleaned_text_pdf)
         print(docs)
         for doc in docs:
@@ -44,6 +46,7 @@ def extract_text_from_pdf(pdf_sources: List[Union[str, bytes, tempfile.SpooledTe
         print(new_collection_persistent)
 
 
+# C:/Users/User/Downloads/cannon-2023-predicting-conversion-to-psychosis-using-machine-learning-are-we-there-yet.pdf
 # C:/Users/User/Downloads/design-patterns-uk.pdf
 def get_to_pdf():
     # Спрашиваем у пользователя, сколько файлов он хотел бы загрузить
