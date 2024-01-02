@@ -40,9 +40,9 @@ app.add_middleware(
 )
 async def root():
     return {
-        "name": "Snapshot Exchange REST API!",
+        "name": "AI Assistant",
         "version": "Version 1.0",
-        "description": "This API provides access to Snapshot Exchange services.",
+        "description": "This API provides access to AI Assistant services.",
         "license": "This API is distributed under the MIT License.",
     }
 
