@@ -27,7 +27,7 @@ def extract_text_from_pdf(pdf_sources: List[Union[str, bytes, tempfile.SpooledTe
 
         # Try Chroma Client
 
-        chroma_client = chromadb.PersistentClient(path="../../.chromadb", settings=Settings(allow_reset=True))
+        chroma_client = chromadb.PersistentClient(path="../../chromadb", settings=Settings(allow_reset=True))
         print(chroma_client.heartbeat())
         # Генерация уникального имени для коллекции
         collection_name = str(uuid.uuid4())

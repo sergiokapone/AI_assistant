@@ -5,10 +5,32 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c3351974-8701-43e6-9f0c-344ce959e662" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/config/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/config/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/routes/upload.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/routes/upload.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/schemas/upload.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/schemas/upload.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/.chromadb/1cdfe152-598d-4623-b801-de2f78949d0b/data_level0.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/.chromadb/1cdfe152-598d-4623-b801-de2f78949d0b/header.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/.chromadb/1cdfe152-598d-4623-b801-de2f78949d0b/length.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/.chromadb/1cdfe152-598d-4623-b801-de2f78949d0b/link_lists.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/.chromadb/475b4926-33cb-4688-bfa6-e151786adc44/data_level0.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/.chromadb/475b4926-33cb-4688-bfa6-e151786adc44/header.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/.chromadb/475b4926-33cb-4688-bfa6-e151786adc44/length.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/.chromadb/475b4926-33cb-4688-bfa6-e151786adc44/link_lists.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/.chromadb/544b63ac-1f15-4711-aeed-13e5f1f654b1/data_level0.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/.chromadb/544b63ac-1f15-4711-aeed-13e5f1f654b1/header.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/.chromadb/544b63ac-1f15-4711-aeed-13e5f1f654b1/length.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/.chromadb/544b63ac-1f15-4711-aeed-13e5f1f654b1/link_lists.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/.chromadb/767c68b4-83d5-4877-a818-0f99de8f376e/data_level0.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/.chromadb/767c68b4-83d5-4877-a818-0f99de8f376e/header.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/.chromadb/767c68b4-83d5-4877-a818-0f99de8f376e/length.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/.chromadb/767c68b4-83d5-4877-a818-0f99de8f376e/link_lists.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/.chromadb/7a49b360-685f-41bf-b368-3863337265ad/data_level0.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/.chromadb/7a49b360-685f-41bf-b368-3863337265ad/header.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/.chromadb/7a49b360-685f-41bf-b368-3863337265ad/length.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/.chromadb/7a49b360-685f-41bf-b368-3863337265ad/link_lists.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/.chromadb/chroma.sqlite3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/.chromadb/f3f90e45-a03e-4d94-af56-03a0f0e7aa9d/data_level0.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/.chromadb/f3f90e45-a03e-4d94-af56-03a0f0e7aa9d/header.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/.chromadb/f3f90e45-a03e-4d94-af56-03a0f0e7aa9d/length.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/.chromadb/f3f90e45-a03e-4d94-af56-03a0f0e7aa9d/link_lists.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/services/extract_text_from_pdf.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/services/extract_text_from_pdf.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
