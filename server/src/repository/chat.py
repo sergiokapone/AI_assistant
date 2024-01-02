@@ -16,7 +16,7 @@ async def respond(current_user: User, session: AsyncSession, instruction: str) -
     session.add(question)
     await session.commit()
 
-    response = chain(instruction).lstrip()
+    response = chain(instruction, current_user.id).lstrip()
 
     answer = Answer(
         question_id=question.id,
