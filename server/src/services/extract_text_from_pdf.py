@@ -2,8 +2,15 @@ import os
 import tempfile
 import PyPDF2
 import re
+import uuid
 
 from typing import Union, List
+
+import chromadb
+
+# import
+from chromadb.config import Settings
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 
 # read only digital PDF book which more 1000 sings
@@ -14,26 +21,36 @@ def extract_text_from_pdf(pdf_sources: List[Union[str, bytes, tempfile.SpooledTe
 
         for page in reader.pages:
             _pdf_text += page.extract_text()
-
-        print(type(_pdf_text))
-
         # Очищаем текст от недопустимых символов и тегов
-        cleaned_text = re.sub(r'[\d/.]', '', _pdf_text)
+        cleaned_text_pdf = re.sub(r'[\d/.]', '', _pdf_text)
+        # print(f"text in the var: {cleaned_text}")
 
-        # Записываем полученный текст в текстовый файл
-        output_file = 'output.txt'
-        mode = 'a' if os.path.exists(output_file) else 'w'
-        with open(output_file, mode, encoding='utf-8') as file:
-            file.write(cleaned_text)
+        # Try Chroma Client
 
-        print(f"Text from PDF file '{pdf_source}' has been written to 'output.txt'")
+        chroma_client = chromadb.PersistentClient(path="../../.chromadb", settings=Settings(allow_reset=True))
+        print(chroma_client.heartbeat())
+        # Генерация уникального имени для коллекции
+        collection_name = str(uuid.uuid4())
+        new_collection_persistent = chroma_client.create_collection(name=collection_name,
+                                                                    metadata={"hnsw:space": "cosine"}
+                                                                    )
+        print(new_collection_persistent)
+
+        text_splitter = RecursiveCharacterTextSplitter(separators=["\n\n", "\n"], chunk_size=1000, chunk_overlap=20)
+        docs = text_splitter.split_text(cleaned_text_pdf)
+        print(docs)
+        for doc in docs:
+            uuid_name = uuid.uuid1()
+            print("document for", uuid_name)
+            new_collection_persistent.add(ids=[str(uuid_name)], documents=doc)
+        print(new_collection_persistent)
 
 
-if __name__ == "__main__":
-
+# C:/Users/User/Downloads/cannon-2023-predicting-conversion-to-psychosis-using-machine-learning-are-we-there-yet.pdf
+# C:/Users/User/Downloads/design-patterns-uk.pdf
+def get_to_pdf():
     # Спрашиваем у пользователя, сколько файлов он хотел бы загрузить
     num_files = int(input("How many PDF files would you like to upload? - "))
-
     pdf_paths = []
     # Просим пользователя ввести путь к каждому файлу
     for i in range(num_files):
@@ -53,3 +70,6 @@ if __name__ == "__main__":
     # Вызываем функцию extract_text_from_pdf с указанными путями к PDF-файлам
     extract_text_from_pdf(pdf_paths)
 
+
+if __name__ == "__main__":
+    get_to_pdf()
