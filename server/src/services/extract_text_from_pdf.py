@@ -57,39 +57,12 @@ def extract_text_from_pdf(pdf_sources: List[Union[str, bytes, tempfile.SpooledTe
     initialize_chroma_client(user_id, cleaned_text_pdf)
 
 
-# C:/Users/User/Downloads/cannon-2023-predicting-conversion-to-psychosis-using-machine-learning-are-we-there-yet.pdf
-# C:/Users/User/Downloads/design-patterns-uk.pdf
-# def get_to_pdf():
-# Спрашиваем у пользователя, сколько файлов он хотел бы загрузить
-# num_files = int(input("How many PDF files would you like to upload? - "))
-# pdf_paths = []
-# Просим пользователя ввести путь к каждому файлу
-# for i in range(num_files):
-#     while True:
-#         pdf_path = input(f"Please enter full path to PDF #{i + 1}: ")
-# Проверяем, является ли указанный путь файлом PDF
-# if not pdf_path.lower().endswith(".pdf"):
-#     print("!!! Specified file is not a PDF file.")
-#     continue
-# Проверяем, существует ли указанный файл
-#     if not os.path.isfile(pdf_path):
-#         print("!!! The specified file does not exist.")
-#         continue
-#     break
-# pdf_paths.append(pdf_path)
-
-# Вызываем функцию extract_text_from_pdf с указанными путями к PDF-файлам
-# cleaned_text_pdf = extract_text_from_pdf(pdf_paths)
-
-# Вызываем функцию инициализации Chroma Client с очищенным текстом
-# initialize_chroma_client(cleaned_text_pdf)
-
-
 if __name__ == "__main__":
     # get_to_pdf()
     # Здесь мы можем получить id пользователя из веб-приложения или другого источника данных
     user_id = "12345"  # Здесь нужно использовать реальный id пользователя
-    pdf_paths = ["path/to/pdf1.pdf", "path/to/pdf2.pdf"]  # Здесь нужно указать реальные пути к PDF-файлам
+    pdf_paths = [
+        "C:/Users/User/Downloads/cannon-2023-predicting-conversion-to-psychosis-using-machine-learning-are-we-there-yet.pdf",
+        "C:/Users/User/Downloads/design-patterns-uk.pdf"]  # Здесь нужно указать реальные пути к PDF-файлам
 
     extract_text_from_pdf(pdf_paths, user_id)
-
