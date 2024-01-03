@@ -26,14 +26,13 @@ def extract_text_from_pdf(pdf_sources: List[Union[str, bytes, tempfile.SpooledTe
         # print(f"text in the var: {cleaned_text}")
 
         # Try Chroma Client
-
         chroma_client = chromadb.PersistentClient(path="../../chromadb", settings=Settings(allow_reset=True))
         print(chroma_client.heartbeat())
         # Генерация уникального имени для коллекции
         collection_name = str(uuid.uuid4())
-        new_collection_persistent = chroma_client.create_collection(name=collection_name,
-                                                                    metadata={"hnsw:space": "cosine"}
-                                                                    )
+        new_collection_persistent = chroma_client.get_or_create_collection(name=collection_name,
+                                                                           metadata={"hnsw:space": "cosine"}
+                                                                           )
         print(new_collection_persistent)
 
         text_splitter = RecursiveCharacterTextSplitter(separators=["\n\n", "\n"], chunk_size=1000, chunk_overlap=20)
