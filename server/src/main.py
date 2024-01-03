@@ -6,8 +6,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import text
 
-from server.src.repository.extract_text_from_pdf import initialize_chroma_client
-
 from .config.settings import settings
 from .database.db_helper import db_helper
 from .routes.auth import router as auth_router
@@ -71,7 +69,6 @@ async def healthchecker(session: AsyncSession = Depends(db_helper.session_depend
 
 
 if __name__ == "__main__":
-    initialize_chroma_client()
-    HOST = "127.0.0.0"
+    HOST = "0.0.0.0"
     PORT = 8000
     uvicorn.run(app, host=HOST, port=PORT, reload=True)

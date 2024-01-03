@@ -4,3 +4,4 @@
 .env
 chromadb/
 __pycache__/
+.pdf
