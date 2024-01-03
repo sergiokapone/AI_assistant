@@ -2,4 +2,5 @@
 .vscode/
 .venv/
 .env
+chromadb/
 __pycache__/
