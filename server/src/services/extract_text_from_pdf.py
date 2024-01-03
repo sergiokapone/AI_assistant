@@ -1,15 +1,13 @@
 import os
-import tempfile
-import PyPDF2
 import re
+import tempfile
 import uuid
-import chromadb
+from typing import List, Union
 
-from typing import Union, List
+import chromadb
+import PyPDF2
 from chromadb.config import Settings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-
-from server.src.database.models import User
 
 # Глобальные переменные
 chroma_client = None
@@ -23,16 +21,21 @@ def initialize_chroma_client(text_from_pdf):
 
     # Создаем Chroma Client, если он не был создан ранее
     if chroma_client is None:
-        chroma_client = chromadb.PersistentClient(path="../../chromadb", settings=Settings(allow_reset=True))
+        chroma_client = chromadb.PersistentClient(
+            path="../../chromadb", settings=Settings(allow_reset=True)
+        )
         print(chroma_client.heartbeat())
 
     user_name = input("Please enter your name: ")
     collection_name = f"{user_name}_collection"
-    new_collection_persistent = chroma_client.get_or_create_collection(name=collection_name,
-                                                                       metadata={"hnsw:space": "cosine"})
+    new_collection_persistent = chroma_client.get_or_create_collection(
+        name=collection_name, metadata={"hnsw:space": "cosine"}
+    )
     print(new_collection_persistent)
 
-    text_splitter = RecursiveCharacterTextSplitter(separators=["\n\n", "\n"], chunk_size=1000, chunk_overlap=20)
+    text_splitter = RecursiveCharacterTextSplitter(
+        separators=["\n\n", "\n"], chunk_size=1000, chunk_overlap=20
+    )
     docs = text_splitter.split_text(text_from_pdf)
     # print(docs)
     for doc in docs:
@@ -43,7 +46,9 @@ def initialize_chroma_client(text_from_pdf):
 
 
 # read only digital PDF book which more 1000 sings
-def extract_text_from_pdf(pdf_sources: List[Union[str, bytes, tempfile.SpooledTemporaryFile]]):
+def extract_text_from_pdf(
+    pdf_sources: List[Union[str, bytes, tempfile.SpooledTemporaryFile]],
+):
     global collection_name
     cleaned_text_pdf = ""
 
@@ -54,7 +59,7 @@ def extract_text_from_pdf(pdf_sources: List[Union[str, bytes, tempfile.SpooledTe
         for page in reader.pages:
             _pdf_text += page.extract_text()
         # Очищаем текст от недопустимых символов и тегов
-        cleaned_text_pdf = re.sub(r'[\d/.]', '', _pdf_text)
+        cleaned_text_pdf = re.sub(r"[\d/.]", "", _pdf_text)
     return cleaned_text_pdf
 
 
