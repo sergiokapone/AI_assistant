@@ -6,9 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="c3351974-8701-43e6-9f0c-344ce959e662" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/routes/upload.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/routes/upload.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/schemas/upload.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/schemas/upload.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/poetry.lock" beforeDir="false" afterPath="$PROJECT_DIR$/server/poetry.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

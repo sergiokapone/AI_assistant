@@ -1,6 +1,6 @@
 from fastapi import APIRouter, UploadFile, File, Depends, Form
 
-from server.src.schemas.upload import UploadSchema
+from server.src.schemas.upload_pdf import UploadSchema
 
 router = APIRouter(prefix="/upload_pdf", tags=["Upload file"])
 
