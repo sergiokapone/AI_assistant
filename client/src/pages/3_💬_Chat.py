@@ -44,6 +44,25 @@ def send_message(message):
         return {"error": "Failed to send message"}
 
 
+def upload_pdf(file):
+    upload_url = "http://127.0.0.1:8000/api/v1/upload_pdf/"
+    access_token = st.session_state.get("access_token", "")
+
+    headers = {
+        "accept": "application/json",
+        "Authorization": f"Bearer {access_token}",
+    }
+
+    files = {"file": ("filename", file, "application/pdf")}
+
+    response = requests.post(upload_url, headers=headers, files=files)
+
+    if response.status_code == 200:
+        return response.json()["pdf_paths"]
+    else:
+        return {"error": "Failed to upload PDF"}
+
+
 def main():
     # init_page()
     init_messages()
@@ -64,6 +83,14 @@ def main():
         elif isinstance(message, str):
             with st.chat_message("user"):
                 st.markdown(message)
+
+    # Добавляем выбор файла в sidebar
+    uploaded_file = st.sidebar.file_uploader("Upload PDF", type=["pdf"])
+
+    if uploaded_file is not None:
+        # Отправляем загруженный файл и обновляем историю
+        upload_response = upload_pdf(uploaded_file)
+        st.sidebar.text(f"Upload Response: {upload_response}")
 
 
 if __name__ == "__main__":
