@@ -15,7 +15,9 @@ class User(Base):
     username: Mapped[str] = mapped_column(String(32), unique=True)
     email: Mapped[str] = mapped_column(String(250), nullable=False, unique=True)
     password: Mapped[str] = mapped_column(String(255), nullable=False)
-    selected_llm: Mapped[str] = mapped_column(String(255), nullable=True)
+    selected_llm: Mapped[str] = mapped_column(
+        String(255), nullable=False, default="mistralai/Mixtral-8x7B-Instruct-v0.1"
+    )
     created_at: Mapped[datetime.datetime] = mapped_column(
         "created_at", DateTime, default=func.now()
     )

@@ -7,9 +7,6 @@ from ..database.models import User
 from ..repository.llm_selector import llm_selector
 from ..services.auth import auth_service
 
-# llm_id = "databricks/dolly-v2-3b"
-# llm_id = "mistralai/Mixtral-8x7B-Instruct-v0.1"
-
 router = APIRouter(prefix="/llm_selector", tags=["llm_select"])
 
 
