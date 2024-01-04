@@ -126,8 +126,7 @@ async def remove_user(session: AsyncSession = Depends(db_helper.session_dependen
     try:
         # Получение идентификатора текущего пользователя
         user_id = User.id  # Здесь нужно заменить на вашу логику получения идентификатора пользователя
-        await logout_user(session)
-        await cleanup_user_data(user_id)
+        await logout_user(session, user_id)
         return {"message": "Logout successful"}
 
     except Exception as e:
