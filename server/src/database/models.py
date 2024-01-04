@@ -1,7 +1,21 @@
 import datetime
+import os
+import sys
 
 from sqlalchemy import DateTime, ForeignKey, String, Text, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+
+# Получаем путь к текущему файлу (models.py)
+current_file = os.path.realpath(__file__)
+
+# Определяем, вызывается ли код из Alembic (по наличию alembic в sys.argv)
+is_alembic = "alembic" in sys.argv[0]
+
+# Импортируем необходимые модули
+if is_alembic:
+    from config.llm_list import LLMNameEnum  # Используем абсолютный импорт
+else:
+    from ..config.llm_list import LLMNameEnum  # Используем относительный импорт
 
 
 class Base(DeclarativeBase):
@@ -16,7 +30,7 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(250), nullable=False, unique=True)
     password: Mapped[str] = mapped_column(String(255), nullable=False)
     selected_llm: Mapped[str] = mapped_column(
-        String(255), nullable=False, default="mistralai/Mixtral-8x7B-Instruct-v0.1"
+        String(255), nullable=False, default=LLMNameEnum.llm_option1
     )
     created_at: Mapped[datetime.datetime] = mapped_column(
         "created_at", DateTime, default=func.now()
