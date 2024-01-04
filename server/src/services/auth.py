@@ -79,7 +79,7 @@ class Auth:
         :rtype: User
         :raises HTTPException: If the token is invalid or the user is not found.
         """
-
+        
         credentials_exception = HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="NOT_VALIDATE_CREDENTIALS"
         )
@@ -87,6 +87,7 @@ class Auth:
         try:
             # Decode JWT
             payload = jwt.decode(token, self.SECRET_KEY, algorithms=[self.ALGORITHM])
+            print(payload)
             if payload["scope"] == "access_token":
                 email = payload["email"]
                 if email is None:

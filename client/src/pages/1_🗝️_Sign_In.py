@@ -15,16 +15,15 @@ def signin_form() -> None:
     container = st.container(border=True)
     email = container.text_input("Email ")
     password = container.text_input("Password ")
-    input = {"email": email, "password": password}
-
+    input = {"username": email, "password": password}
     if st.button("Sign In"):
         try:
-            response = requests.post(url=sign_in_url, data=json.dumps(input))
+            response = requests.post(url=sign_in_url, data = input)
         except ConnectionRefusedError:
             with st.chat_message(name="assistant", avatar="./images/logo.PNG"):
                 st.write("No connection with server.")
 
-        #print(response.status_code)
+        ###################print(response.text)
         if response.status_code == 409:  ## already exists
             with st.chat_message(name="assistant"):
                 st.write("User not found")
@@ -32,8 +31,9 @@ def signin_form() -> None:
             with st.chat_message(name="assistant", avatar="./images/logo.PNG"):
                 st.write("Incorrect form.")
         else:
-            with st.chat_message(name="assistant"):
+            with st.chat_message(name="assistant", avatar="./images/logo.PNG"):
                 st.write("User was signed in")
+                print(response)
 
 if __name__ == "__main__":
     signin_form()
