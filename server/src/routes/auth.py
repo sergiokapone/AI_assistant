@@ -14,14 +14,14 @@ from fastapi.security import (
 )
 from sqlalchemy.ext.asyncio import AsyncSession
 
-
 from ..database.db_helper import db_helper
 from ..database.models import User
 from ..repository import users as repository_users
-from ..repository.user_cleanup import cleanup_user_data, logout_user
 from ..schemas.auth import TokenSchema
 from ..schemas.users import UserSchema
 from ..services.auth import auth_service
+
+from ..repository.user_cleanup import cleanup_user_data, logout_user
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 security = HTTPBearer()
@@ -93,7 +93,7 @@ async def login(
 async def logout(
         credentials: HTTPAuthorizationCredentials = Security(security),
         session: AsyncSession = Depends(db_helper.scoped_session_dependency),
-        current_user: User = Depends(auth_service.get_authenticated_user),
+        # current_user: User = Depends(auth_service.get_authenticated_user),
 ):
     """
     **Log out user and add the token to the blacklist.**
@@ -115,22 +115,24 @@ async def logout(
     :rtype: MessageResponseSchema
     """
 
+    token = credentials.credentials
+
+    await repository_users.add_to_blacklist(token, session)
+    return {"message": "USER_IS_LOGOUT"}
+
+
+@router.delete("/delete")
+async def remove_user(session: AsyncSession = Depends(db_helper.session_dependency)):
     try:
-        user_id = current_user
-        await logout_user(session, user_id)
+        # Получение идентификатора текущего пользователя
+        user_id = User.id  # Здесь нужно заменить на вашу логику получения идентификатора пользователя
+        await logout_user(session)
         await cleanup_user_data(user_id)
-
-        token = credentials.credentials
-
-        await repository_users.add_to_blacklist(token, session)
-        return {"message": "USER_IS_LOGOUT"}
+        return {"message": "Logout successful"}
 
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Logout failed",
         )
-
-
-
 
