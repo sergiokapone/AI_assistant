@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile, status
+from fastapi import APIRouter, Depends, Form, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..database.db_helper import db_helper
@@ -11,9 +11,8 @@ router = APIRouter(prefix="/chat", tags=["chat"])
 
 
 @router.post("/", response_model=Response)
-async def read_comments(
+async def chat(
     user_query: str = Form(...),
-    file: UploadFile = Form(None),
     current_user: User = Depends(auth_service.get_authenticated_user),
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
