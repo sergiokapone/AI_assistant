@@ -4,7 +4,6 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     api_prefix: str = "api/v1"
     database_url: str = "sqlite+aiosqlite:///db.sqlite3"
-    # vectordb_url: str = "sqlite:///chroma.sqlite3"
     db_echo: bool = True
     secret_key: str = "secret_key"
     algorithm: str = "HS256"

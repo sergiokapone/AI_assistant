@@ -10,7 +10,7 @@ from .config.settings import settings
 from .database.db_helper import db_helper
 from .routes.auth import router as auth_router
 from .routes.chat import router as chat_router
-from .routes.upload import router as upload_router
+from .routes.upload_pdf import router as upload_router
 
 current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -69,6 +69,6 @@ async def healthchecker(session: AsyncSession = Depends(db_helper.session_depend
 
 
 if __name__ == "__main__":
-    HOST = "127.0.0.0"
+    HOST = "0.0.0.0"
     PORT = 8000
     uvicorn.run(app, host=HOST, port=PORT, reload=True)

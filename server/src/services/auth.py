@@ -57,7 +57,7 @@ class Auth:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED, detail="INVALID_SCOPE"
             )
-        except JWTError:
+        except jwt.InvalidTokenError:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="NOT_VALIDATE_CREDENTIALS",
@@ -79,7 +79,7 @@ class Auth:
         :rtype: User
         :raises HTTPException: If the token is invalid or the user is not found.
         """
-
+        
         credentials_exception = HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="NOT_VALIDATE_CREDENTIALS"
         )
@@ -87,6 +87,7 @@ class Auth:
         try:
             # Decode JWT
             payload = jwt.decode(token, self.SECRET_KEY, algorithms=[self.ALGORITHM])
+            print(payload)
             if payload["scope"] == "access_token":
                 email = payload["email"]
                 if email is None:
@@ -99,7 +100,7 @@ class Auth:
             if is_invalid_token:
                 raise credentials_exception
 
-        except JWTError:
+        except jwt.InvalidTokenError:
             raise credentials_exception
 
         user = await repository_users.get_user_by_email(email, db)
@@ -127,7 +128,7 @@ class Auth:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED, detail="INVALID_SCOPE"
             )
-        except JWTError as e:
+        except jwt.InvalidTokenError as e:
             print(e)
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
