@@ -51,7 +51,7 @@ def main():
     # Supervise user input
     if user_input := st.chat_input("Input your question!"):
         st.session_state.messages.append(user_input)
-        with st.spinner("ChatGPT is typing ..."):
+        with st.spinner("LLM is typing ..."):
             answer = send_message(st.session_state.messages)
         st.session_state.messages.append(answer)
 
