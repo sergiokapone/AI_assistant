@@ -1,6 +1,9 @@
 from openai import OpenAI
 import streamlit as st
 import requests
+import json
+
+chat_url = "http://127.0.0.1:8000/api/v1/chat"
 
 st.set_page_config(page_title="Chat", page_icon="💬")
 st.image("./images/bot.PNG", width=500)
@@ -39,6 +42,9 @@ if prompt := st.chat_input("Ask question here"):
     with st.chat_message("assistant", avatar = avatar["assistant"]):
         message_placeholder = st.empty()
         full_response = ""
+        data = {"user_query": prompt}
+        # server_response = requests.post(url=chat_url, data = data)
+        # print(server_response)
         for response in client.chat.completions.create(
             model=st.session_state["openai_model"],
             messages=[
@@ -49,5 +55,8 @@ if prompt := st.chat_input("Ask question here"):
         ):
             full_response += (response.choices[0].delta.content or "")
             message_placeholder.markdown(full_response + "▌")
+
         message_placeholder.markdown(full_response)
+##        message_placeholder.markdown(server_response)
+
     st.session_state.messages.append({"role": "assistant", "content": full_response})

@@ -9,7 +9,6 @@ from ..services.auth import auth_service
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 
-
 @router.post("/", response_model=Response)
 async def read_comments(
     user_query: str = Form(...),
