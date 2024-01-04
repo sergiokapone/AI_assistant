@@ -62,6 +62,7 @@ async def login(
     body: OAuth2PasswordRequestForm = Depends(),
     db: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
+    
     user = await repository_users.get_user_by_email(body.username, db)
 
     if user is None:

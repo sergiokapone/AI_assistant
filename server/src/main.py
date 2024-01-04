@@ -69,6 +69,6 @@ async def healthchecker(session: AsyncSession = Depends(db_helper.session_depend
 
 
 if __name__ == "__main__":
-    HOST = "127.0.0.0"
+    HOST = "0.0.0.0"
     PORT = 8000
     uvicorn.run(app, host=HOST, port=PORT, reload=True)
