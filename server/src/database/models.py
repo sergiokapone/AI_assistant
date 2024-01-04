@@ -40,9 +40,12 @@ class User(Base):
     created_at: Mapped[datetime.datetime] = mapped_column(
         "created_at", DateTime, default=func.now()
     )
-    user_questions: Mapped[list["Question"]] = relationship(back_populates="user")
+    user_questions: Mapped[list["Question"]] = relationship(
+        back_populates="user", cascade="all", passive_deletes=True
+    )
+
     user_uploaded_texts: Mapped[list["UploadedText"]] = relationship(
-        back_populates="user"
+        back_populates="user", cascade="all", passive_deletes=True
     )
 
 
@@ -56,8 +59,14 @@ class Question(Base):
     question_text: Mapped[str] = mapped_column(Text)
     created_at: Mapped[datetime.datetime] = mapped_column(DateTime, default=func.now())
 
-    user: Mapped[User] = relationship(back_populates="user_questions")
-    answers: Mapped["Answer"] = relationship(back_populates="question")
+    user: Mapped[User] = relationship(
+        back_populates="user_questions", passive_deletes=True
+    )
+    answers: Mapped["Answer"] = relationship(
+        back_populates="question",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )
 
 
 class Answer(Base):
@@ -70,7 +79,9 @@ class Answer(Base):
     answer_text: Mapped[str] = mapped_column(Text)
     created_at: Mapped[datetime.datetime] = mapped_column(DateTime, default=func.now())
 
-    question: Mapped[Question] = relationship(back_populates="answers")
+    question: Mapped[Question] = relationship(
+        back_populates="answers", passive_deletes=True
+    )
 
 
 class UploadedText(Base):
@@ -83,7 +94,9 @@ class UploadedText(Base):
     uploaded_text: Mapped[str] = mapped_column(Text)
     created_at: Mapped[datetime.datetime] = mapped_column(DateTime, default=func.now())
 
-    user: Mapped[User] = relationship(back_populates="user_uploaded_texts")
+    user: Mapped[User] = relationship(
+        back_populates="user_uploaded_texts", passive_deletes=True
+    )
 
 
 class BlacklistToken(Base):
