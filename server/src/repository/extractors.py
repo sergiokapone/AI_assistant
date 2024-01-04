@@ -12,6 +12,10 @@ from ..database.models import UploadedText, User
 # read only digital PDF book which more 1000 sings
 
 
+async def extract_text(path):
+    ...
+
+
 async def extract_text_from_pdf(
     current_user: User,
     pdf_sources: List[Union[str, bytes, tempfile.SpooledTemporaryFile]],
@@ -35,8 +39,6 @@ async def extract_text_from_pdf(
         name=collection_name, metadata={"hnsw:space": "cosine"}
     )
 
-    print(">>>>>>>>>>>>>>>>>>>>>>>", new_collection_persistent)
-
     text_splitter = RecursiveCharacterTextSplitter(
         separators=["\n\n", "\n"], chunk_size=1000, chunk_overlap=20
     )
@@ -54,3 +56,11 @@ async def extract_text_from_pdf(
 
     session.add(uploaded_text)
     await session.commit()
+
+
+async def extract_text_from_txt():
+    ...
+
+
+async def extract_subtitles_from_youtube():
+    ...

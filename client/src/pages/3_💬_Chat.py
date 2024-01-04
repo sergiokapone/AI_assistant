@@ -54,26 +54,6 @@ def send_message(message):
         return {"error": "Failed to send message"}
 
 
-# def upload_pdf(file):
-#     upload_url = "http://127.0.0.1:8000/api/v1/upload_pdf/"
-#     access_token = st.session_state.get("access_token", "")
-
-#     headers = {
-#         "accept": "application/json",
-#         "Authorization": f"Bearer {access_token}",
-#     }
-
-#     files = {"file": ("filename", file, "application/pdf")}
-
-#     response = requests.post(upload_url, headers=headers, files=files)
-
-#     if response.status_code == 200:
-#         print(">>>>>>>>>>>>>>>>>>>>>>>", response.json()["pdf_paths"])
-#         return response.json()["pdf_paths"]
-#     else:
-#         return {"error": "Failed to upload PDF"}
-
-
 def upload_pdf(
     uploaded_file: UploadedFile,
 ) -> requests.Response:
