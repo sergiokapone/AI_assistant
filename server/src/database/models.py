@@ -5,15 +5,20 @@ import sys
 from sqlalchemy import DateTime, ForeignKey, String, Text, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
+################################
+# Костиль для запуску міграцій
+
 # Отримуємо шлях до поточного файлу (models.py)
 current_file = os.path.realpath(__file__)
 
 # Визначаємо, чи викликається код з Alembic (за наявністю alembic в sys.argv)
 is_alembic = "alembic" in sys.argv[0]
 
+
 # Імпортуємо необхідні модулі
 if is_alembic:
     from config.llm_list import LLMNameEnum  # Використовуємо абсолютний імпорт
+################################
 else:
     from ..config.llm_list import LLMNameEnum  # Використовуємо відносний імпорт
 
