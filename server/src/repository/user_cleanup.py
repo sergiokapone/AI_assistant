@@ -11,3 +11,8 @@ async def cleanup_user_data(current_user: User, user_id):
             await session.execute(delete(current_user).where(current_user.id == user_id))
             await session.commit()
 
+
+async def logout_user(session: AsyncSession, current_user: User, user_id):
+    async with session.begin():
+        await session.execute(delete(current_user).where(current_user.id == user_id))
+        await session.commit()
