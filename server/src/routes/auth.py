@@ -14,8 +14,11 @@ from fastapi.security import (
 )
 from sqlalchemy.ext.asyncio import AsyncSession
 
+
 from ..database.db_helper import db_helper
+from ..database.models import User
 from ..repository import users as repository_users
+from ..repository.user_cleanup import cleanup_user_data, logout_user
 from ..schemas.auth import TokenSchema
 from ..schemas.users import UserSchema
 from ..services.auth import auth_service
@@ -31,9 +34,9 @@ security = HTTPBearer()
     status_code=status.HTTP_201_CREATED,
 )
 async def signup(
-    body: UserSchema,
-    # request: Request,
-    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+        body: UserSchema,
+        # request: Request,
+        session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
     exist_user_email = await repository_users.get_user_by_email(body.email, session)
     exist_user_username = await repository_users.get_user_by_username(
@@ -58,11 +61,10 @@ async def signup(
 
 @router.post("/login", response_model=TokenSchema)
 async def login(
-    # response:Response,
-    body: OAuth2PasswordRequestForm = Depends(),
-    db: AsyncSession = Depends(db_helper.scoped_session_dependency),
+        # response:Response,
+        body: OAuth2PasswordRequestForm = Depends(),
+        db: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
-    
     user = await repository_users.get_user_by_email(body.username, db)
 
     if user is None:
@@ -89,9 +91,9 @@ async def login(
 
 @router.post("/logout")
 async def logout(
-    credentials: HTTPAuthorizationCredentials = Security(security),
-    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
-    # current_user: User = Depends(auth_service.get_authenticated_user),
+        credentials: HTTPAuthorizationCredentials = Security(security),
+        session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+        current_user: User = Depends(auth_service.get_authenticated_user),
 ):
     """
     **Log out user and add the token to the blacklist.**
@@ -113,7 +115,22 @@ async def logout(
     :rtype: MessageResponseSchema
     """
 
-    token = credentials.credentials
+    try:
+        user_id = current_user
+        await logout_user(session, user_id)
+        await cleanup_user_data(user_id)
 
-    await repository_users.add_to_blacklist(token, session)
-    return {"message": "USER_IS_LOGOUT"}
+        token = credentials.credentials
+
+        await repository_users.add_to_blacklist(token, session)
+        return {"message": "USER_IS_LOGOUT"}
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Logout failed",
+        )
+
+
+
+

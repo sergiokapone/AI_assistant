@@ -6,13 +6,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ..database.db_helper import db_helper
 from ..database.models import User
 from ..repository.extractors import extract_text_from_pdf
+from ..schemas.upload_pdf import UploadSchema
 from ..services.auth import auth_service
 from ..vector_db.chroma_init import get_chroma_client, initialize_chroma_client
 
 router = APIRouter(prefix="/upload_pdf", tags=["Upload file"])
 
 
-@router.post("/")
+@router.post("/", response_model=UploadSchema)
 async def upload_pdf(
     current_user: User = Depends(auth_service.get_authenticated_user),
     file: UploadFile = File(...),
