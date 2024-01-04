@@ -1,6 +1,5 @@
 import requests
 import streamlit as st
-from streamlit_chat import message
 
 # Установка заголовка и иконки страницы
 st.set_page_config(page_title="Chat", page_icon="💬")
@@ -12,7 +11,19 @@ st.image("./images/bot.PNG", width=500)
 st.sidebar.header("Chat")
 
 
-# Функция отправки сообщения на сервер и получения ответа
+def init_page():
+    st.set_page_config(page_title="Personal ChatGPT")
+    st.header("Personal ChatGPT")
+    st.sidebar.title("Options")
+
+
+def init_messages():
+    clear_button = st.sidebar.button("Clear Conversation", key="clear")
+    if clear_button or "messages" not in st.session_state:
+        st.session_state.messages = []
+        st.session_state.costs = []
+
+
 def send_message(message):
     chat_url = "http://127.0.0.1:8000/api/v1/chat/"
     access_token = st.session_state.get("access_token", "")
@@ -33,54 +44,26 @@ def send_message(message):
         return {"error": "Failed to send message"}
 
 
-# Основная функция
 def main():
-    # Заголовок страницы
-    st.title("Chat with Backend")
+    # init_page()
+    init_messages()
 
-    # Создание контейнеров для ввода и отображения ответов
-    response_container = st.container()
-    text_container = st.container()
+    # Supervise user input
+    if user_input := st.chat_input("Input your question!"):
+        st.session_state.messages.append(user_input)
+        with st.spinner("ChatGPT is typing ..."):
+            answer = send_message(st.session_state.messages)
+        st.session_state.messages.append(answer)
 
-    # Инициализация переменных
-    details = ""
-
-    if "responses" not in st.session_state:
-        st.session_state["responses"] = ["I'm here to assist you!"]
-
-    if "requests" not in st.session_state:
-        st.session_state["requests"] = []
-
-    if "buffer_memory" not in st.session_state:
-        st.session_state.buffer_memory = ""
-
-    # Ввод пользователя и кнопка отправки
-    with text_container:
-        query = st.text_input("You:", key="input", placeholder="Start chat")
-        submit = st.button("Send")
-
-        if submit:
-            response = send_message(query)
-            st.session_state.requests.append(query)
-            st.session_state.responses.append(response)
-
-    # Отображение ответов
-    with response_container:
-        if st.session_state["responses"]:
-            for i in range(len(st.session_state["responses"])):
-                message(
-                    st.session_state["responses"][i],
-                    key=str(i),
-                    avatar_style="no-avatar",
-                    allow_html=True,
-                )
-                if i < len(st.session_state["requests"]):
-                    message(
-                        st.session_state["requests"][i],
-                        is_user=True,
-                        key=str(i) + "_user",
-                        allow_html=True,
-                    )
+    # Display chat history
+    messages = st.session_state.get("messages", [])
+    for message in messages:
+        if isinstance(message, str):
+            with st.chat_message("assistant"):
+                st.markdown(message)
+        elif isinstance(message, str):
+            with st.chat_message("user"):
+                st.markdown(message)
 
 
 if __name__ == "__main__":
