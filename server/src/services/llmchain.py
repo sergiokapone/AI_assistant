@@ -2,13 +2,15 @@ from langchain.llms import HuggingFaceHub
 from langchain.prompts import PromptTemplate
 from langchain.schema import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
+from langchain.embeddings.sentence_transformer import SentenceTransformerEmbeddings
 from langchain.vectorstores import Chroma
 
 from ..config.settings import settings
+from ..vector_db.chroma_init import get_chroma_client
 
 API_KEY = settings.llm_api_key
 
-llm_id = "databricks/dolly-v2-3b"
+llm_id = "mistralai/Mixtral-8x7B-Instruct-v0.1"
 
 transformer_id = "sentence-transformers/all-MiniLM-L6-v2"
 
@@ -28,16 +30,15 @@ prompt_no_context = PromptTemplate.from_template(template_no_context)
 
 
 class Chain:
-    def __init__(self, context=None, history=[]):
+    def __init__(self, history=[]):
         self.llm = HuggingFaceHub(
             repo_id=llm_id,
             huggingfacehub_api_token=API_KEY,
             model_kwargs={"temperature": 0.2, "max_length": 255},
         )
-        self.context = context
+        self.context = None
         self.hostory = history  # NYI
-        if context:
-            self.retriever = context.as_retriever()
+        self.embedding_function = SentenceTransformerEmbeddings(model_name=transformer_id)
 
     def format_docs(self, docs):
         return "\n\n".join(doc.page_content for doc in docs)
@@ -46,7 +47,7 @@ class Chain:
         if self.context:
             self.chain = (
                 {
-                    "context": self.retriever | self.format_docs,
+                    "context": self.context.as_retriever() | self.format_docs,
                     "question": RunnablePassthrough(),
                 }
                 | prompt
@@ -62,10 +63,13 @@ class Chain:
             )
 
     def create_context(self, user_id):
+        client = get_chroma_client()
         try:
+            tmp_collection = client.get_collection(f"collection_{user_id}") #raises ValueError if the collection does't exist
             self.context = Chroma(
                         client=client, #will be imported from "extract_text_from_pdf"
-                        collection_name=f"user_{user_id}",)
+                        collection_name=f"collection_{user_id}",
+                        embedding_function=self.embedding_function,)
         except ValueError:
             self.context = None
 
