@@ -1,10 +1,10 @@
 import requests
 import streamlit as st
-
-sign_in_url = "http://127.0.0.1:8000/api/v1/auth/login"
+from config.settings import settings
 
 
 def signin_form() -> None:
+    sign_in_url = settings.sign_in_url
     st.set_page_config(page_title="Sign In", page_icon="🗝️")
     st.image("./images/bot.PNG", width=500)
     st.header("Please fill out the form to sign in")

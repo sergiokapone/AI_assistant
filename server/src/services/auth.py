@@ -26,9 +26,9 @@ class Auth:
     async def create_access_token(self, data: dict, expires_delta: int | None = None):
         to_encode = data.copy()
         if expires_delta:
-            expire = datetime.utcnow() + timedelta(minutes=15)
+            expire = datetime.utcnow() + timedelta(minutes=150)
         else:
-            expire = datetime.utcnow() + timedelta(minutes=15)
+            expire = datetime.utcnow() + timedelta(minutes=150)
         to_encode.update(
             {"iat": datetime.utcnow(), "exp": expire, "scope": "access_token"}
         )
@@ -79,7 +79,7 @@ class Auth:
         :rtype: User
         :raises HTTPException: If the token is invalid or the user is not found.
         """
-        
+
         credentials_exception = HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="NOT_VALIDATE_CREDENTIALS"
         )
@@ -87,7 +87,6 @@ class Auth:
         try:
             # Decode JWT
             payload = jwt.decode(token, self.SECRET_KEY, algorithms=[self.ALGORITHM])
-            print(payload)
             if payload["scope"] == "access_token":
                 email = payload["email"]
                 if email is None:

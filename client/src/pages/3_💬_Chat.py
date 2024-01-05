@@ -1,59 +1,153 @@
+import base64
+
+import requests
 import streamlit as st
-from openai import OpenAI
+from config.settings import settings
+from streamlit.runtime.uploaded_file_manager import UploadedFile
 
-chat_url = "http://127.0.0.1:8000/api/v1/chat"
-
+# Установка заголовка и иконки страницы
 st.set_page_config(page_title="Chat", page_icon="💬")
+
+# Загрузка изображения бота
 st.image("./images/bot.PNG", width=500)
+
+# Заголовок боковой панели
 st.sidebar.header("Chat")
 
 
-client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-avatar = {"user": "./images/human.png", "assistant": "./images/logo.PNG"}
+@st.cache_data
+def pdf_to_base64(uploaded_file: UploadedFile) -> str:
+    """Display the PDF as an embedded b64 string in a markdown component"""
+    base64_pdf = base64.b64encode(uploaded_file.getvalue()).decode("utf-8")
+    return f'<embed src="data:application/pdf;base64,{base64_pdf}" width=100% height=800 type="application/pdf">'
 
-uploaded_files = st.file_uploader("Choose a PDF file", accept_multiple_files=True)
-for uploaded_file in uploaded_files:
-    bytes_data = uploaded_file.read()
-    st.write("filename:", uploaded_file.name)
-#    st.write(bytes_data)
 
-ai_models = ("gpt-3.5-turbo", "gpt-4", "gpt-4-32k")
-model_choice = st.selectbox("Please select AI Model", ai_models)
-#####st.write(f"Your choice: {model_choice}")
+def init_page():
+    st.set_page_config(page_title="Personal ChatGPT")
+    st.header("Personal ChatGPT")
+    st.sidebar.title("Options")
 
-if "openai_model" not in st.session_state:
-    st.session_state["openai_model"] = model_choice
 
-if "messages" not in st.session_state:
-    st.session_state.messages = []
+def init_messages():
+    clear_button = st.sidebar.button("Clear Conversation", key="clear")
+    if clear_button or "messages" not in st.session_state:
+        st.session_state.messages = []
+        st.session_state.costs = []
 
-for message in st.session_state.messages:
-    with st.chat_message(message["role"], avatar=avatar[message["role"]]):
-        st.markdown(message["content"])
 
-if prompt := st.chat_input("Ask question here"):
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user", avatar=avatar["user"]):
-        st.markdown(prompt)
+def send_message(message):
+    chat_url = settings.chat_url
+    access_token = st.session_state.get("access_token", "")
 
-    with st.chat_message("assistant", avatar=avatar["assistant"]):
-        message_placeholder = st.empty()
-        full_response = ""
-        data = {"user_query": prompt}
-        # server_response = requests.post(url=chat_url, data = data)
-        # print(server_response)
-        for response in client.chat.completions.create(
-            model=st.session_state["openai_model"],
-            messages=[
-                {"role": m["role"], "content": m["content"]}
-                for m in st.session_state.messages
-            ],
-            stream=True,
-        ):
-            full_response += response.choices[0].delta.content or ""
-            message_placeholder.markdown(full_response + "▌")
+    headers = {
+        "accept": "application/json",
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/x-www-form-urlencoded",
+    }
 
-        message_placeholder.markdown(full_response)
-    ##        message_placeholder.markdown(server_response)
+    data = {"user_query": message}
 
-    st.session_state.messages.append({"role": "assistant", "content": full_response})
+    response = requests.post(chat_url, headers=headers, data=data)
+
+    if response.status_code == 200:
+        return response.json()["string"]
+    else:
+        return {"error": "Failed to send message"}
+
+
+def upload_pdf(
+    uploaded_file: UploadedFile,
+) -> requests.Response:
+    upload_url = settings.uload_file_url
+    access_token = st.session_state.get("access_token", "")
+
+    headers = {
+        "accept": "application/json",
+        "Authorization": f"Bearer {access_token}",
+    }
+
+    file_name: str = uploaded_file.name
+    print(file_name)
+
+    files = {"file": (file_name, uploaded_file)}
+
+    response = requests.post(
+        upload_url,
+        files=files,
+        headers=headers,
+    )
+
+    if response.status_code == 200:
+        return response.json()["pdf_paths"]
+    else:
+        return {"error": "Failed to upload PDF"}
+
+
+def select_llm(llm_model: str) -> requests.Response:
+    selector_url = settings.llm_selector_url
+    access_token = st.session_state.get("access_token", "")
+
+    headers = {
+        "accept": "application/json",
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/x-www-form-urlencoded",
+    }
+
+    data = {
+        "llm_name": f"{llm_model}",
+    }
+    response = requests.post(selector_url, headers=headers, data=data)
+    if response.status_code == 200:
+        return response.json()["message"]
+    else:
+        return "Failed to upload LLM: possible reason not authorized"
+
+
+def main():
+    # Добавляем выбор файла в sidebar
+    uploaded_file = st.sidebar.file_uploader("Upload PDF", type=["pdf"])
+
+    if uploaded_file:
+        pdf_display = pdf_to_base64(uploaded_file)
+        st.markdown(pdf_display, unsafe_allow_html=True)
+
+        upload_pdf(uploaded_file)
+
+    # init_page()
+    LLM_MODELS = (
+        "databricks/dolly-v2-3b",
+        "mistralai/Mixtral-8x7B-Instruct-v0.1",
+        "mistralai/Mixtral-8x7B-Instruct-v0.2",
+        "mistralai/Mistral-7B-v0.1",
+        "HuggingFaceH4/zephyr-7b-beta",
+    )
+    avatar = {"user": "./images/human.png", "assistant": "./images/logo.PNG"}
+    option = st.sidebar.selectbox(
+        "Please select LLM model to communicate with.", LLM_MODELS
+    )
+    ###print(option)
+
+    init_messages()
+
+    for message in st.session_state.messages:
+        print(message)
+        with st.chat_message(message["role"], avatar=avatar[message["role"]]):
+            st.markdown(message["content"])
+
+    response = select_llm(option)
+
+    if prompt := st.chat_input("Ask question here"):
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        with st.chat_message("user", avatar=avatar["user"]):
+            st.markdown(prompt)
+
+        with st.chat_message("assistant", avatar=avatar["assistant"]):
+            message_placeholder = st.empty()
+        with st.spinner("LLM is typing ..."):
+            answer = send_message(prompt)
+            message_placeholder.markdown(answer)
+        st.session_state.messages.append({"role": "assistant", "content": answer})
+
+
+if __name__ == "__main__":
+    main()

@@ -10,6 +10,7 @@ from .config.settings import settings
 from .database.db_helper import db_helper
 from .routes.auth import router as auth_router
 from .routes.chat import router as chat_router
+from .routes.llm_selector import router as llm_selector_router
 from .routes.upload_pdf import router as upload_router
 
 current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -22,6 +23,7 @@ app = FastAPI(
 app.include_router(auth_router, prefix=f"/{settings.api_prefix}")
 app.include_router(chat_router, prefix=f"/{settings.api_prefix}")
 app.include_router(upload_router, prefix=f"/{settings.api_prefix}")
+app.include_router(llm_selector_router, prefix=f"/{settings.api_prefix}")
 
 # Настройка CORS
 app.add_middleware(

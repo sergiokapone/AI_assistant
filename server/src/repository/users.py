@@ -1,6 +1,7 @@
 import datetime
+import logging
 
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -18,6 +19,15 @@ async def create_user(body: UserSchema, session: AsyncSession) -> User:
         return new_user
     except Exception as e:
         await session.rollback()
+        raise e
+
+
+async def remove_user(current_user: User, session: AsyncSession):
+    try:
+        async with session.begin():
+            await session.execute(delete(User).where(User.id == current_user.id))
+    except Exception as e:
+        logging.error(f"Error removing user: {e}")
         raise e
 
 
