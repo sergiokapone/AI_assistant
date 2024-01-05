@@ -2,4 +2,7 @@
 .vscode/
 .venv/
 .env
+chromadb/
 __pycache__/
+.pdf
+db.sqlite3
