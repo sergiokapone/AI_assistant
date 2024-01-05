@@ -1,3 +1,5 @@
+import pprint
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -17,8 +19,7 @@ async def respond(current_user: User, session: AsyncSession, instruction: str) -
     session.add(question)
     await session.commit()
 
-    response = chain(instruction, current_user.id).lstrip()
-
+    response = chain(instruction, current_user.id)
     answer = Answer(
         question_id=question.id,
         answer_text=response,
@@ -26,9 +27,9 @@ async def respond(current_user: User, session: AsyncSession, instruction: str) -
 
     session.add(answer)
     await session.commit()
-    hystory = await extract_history(current_user, session)
 
-    print(hystory)
+    history = await extract_history(current_user, session)
+    pprint.pprint(history)
 
     return Response(string=response)
 

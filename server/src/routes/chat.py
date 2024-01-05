@@ -9,8 +9,9 @@ from ..services.auth import auth_service
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 
+
 @router.post("/", response_model=Response)
-async def read_comments(
+async def chat(
     user_query: str = Form(...),
     current_user: User = Depends(auth_service.get_authenticated_user),
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
