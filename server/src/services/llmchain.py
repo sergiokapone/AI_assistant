@@ -7,7 +7,8 @@ from ..config.settings import settings
 
 API_KEY = settings.llm_api_key
 
-llm_id = "databricks/dolly-v2-3b"
+# llm_id = "databricks/dolly-v2-3b"
+llm_id = "mistralai/Mixtral-8x7B-Instruct-v0.1"
 
 transformer_id = "sentence-transformers/all-MiniLM-L6-v2"
 
@@ -54,8 +55,10 @@ class Chain:
             )
         else:
             self.chain = (
-                {"user_id": self.get_current_user,
-                 "question": RunnablePassthrough(),}
+                {
+                    "user_id": self.get_current_user,
+                    "question": RunnablePassthrough(),
+                }
                 | prompt_no_context
                 | self.llm
                 | StrOutputParser()

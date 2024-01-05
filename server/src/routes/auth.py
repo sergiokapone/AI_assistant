@@ -15,6 +15,7 @@ from fastapi.security import (
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..database.db_helper import db_helper
+from ..database.models import User
 from ..repository import users as repository_users
 from ..schemas.auth import TokenSchema
 from ..schemas.users import UserSchema
@@ -62,7 +63,6 @@ async def login(
     body: OAuth2PasswordRequestForm = Depends(),
     db: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
-    
     user = await repository_users.get_user_by_email(body.username, db)
 
     if user is None:
@@ -117,3 +117,19 @@ async def logout(
 
     await repository_users.add_to_blacklist(token, session)
     return {"message": "USER_IS_LOGOUT"}
+
+
+@router.delete("/remove")
+async def remove_user(
+    current_user: User = Depends(auth_service.get_authenticated_user),
+    session: AsyncSession = Depends(db_helper.session_dependency),
+):
+    try:
+        await repository_users.remove_user(current_user, session=session)
+        return {"message": "User removed successfully"}
+
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Logout failed",
+        )

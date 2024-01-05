@@ -1,4 +1,3 @@
-import json
 import requests
 import streamlit as st
 
@@ -14,28 +13,32 @@ def signin_form() -> None:
 
     container = st.container(border=True)
     email = container.text_input("Email ")
-    password = container.text_input("Password ")
+    password = container.text_input("Password ", type="password")
     input = {"username": email, "password": password}
+
     if st.button("Sign In"):
         try:
-            response = requests.post(url=sign_in_url, data = input)
+            response = requests.post(url=sign_in_url, data=input)
+            response_data = response.json()  # Парсим JSON-ответ
+            access_token = response_data.get("access_token")
+
+            if access_token:
+                # Зберігаємо токен у session_state
+                st.session_state.access_token = access_token
+
+                # Виводимо інформацію про успішну аутентифікацію
+                with st.chat_message(name="assistant", avatar="./images/logo.PNG"):
+                    st.write("User was signed in successfully.")
+
+            else:
+                # Виводимо інформацію про помилку аутентифікації
+                with st.chat_message(name="assistant", avatar="./images/logo.PNG"):
+                    st.write("User not found or incorrect credentials.")
+
         except ConnectionRefusedError:
             with st.chat_message(name="assistant", avatar="./images/logo.PNG"):
-                st.write("No connection with server.")
+                st.write("No connection with the server.")
 
-        ###################print(response.text)
-        if response.status_code == 409:  ## already exists
-            with st.chat_message(name="assistant"):
-                st.write("User not found")
-        elif response.status_code == 422:  ## unprocessable entity
-            with st.chat_message(name="assistant", avatar="./images/logo.PNG"):
-                st.write("Incorrect form.")
-        else:
-            with st.chat_message(name="assistant", avatar="./images/logo.PNG"):
-                st.write("User was signed in")
-                print(response)
 
 if __name__ == "__main__":
     signin_form()
-
-
