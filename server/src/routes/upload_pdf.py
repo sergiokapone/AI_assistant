@@ -1,6 +1,6 @@
 import os
 
-from fastapi import APIRouter, Depends, File, UploadFile
+from fastapi import APIRouter, Depends, File, UploadFile, Path
 from fastapi.requests import HTTPConnection
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -61,7 +61,7 @@ async def text_from_txt_endpoint(
 @router.post("/subtitles")
 async def subtitles_from_youtube_endpoint(
         current_user: User = Depends(auth_service.get_authenticated_user),
-        file: UploadFile = File(...),
+        # path: UploadFile = Path(),
         session: AsyncSession = Depends(db_helper.scoped_session_dependency),
         chroma_helper: initialize_chroma_client = Depends(get_chroma_client),
 ):
@@ -69,12 +69,6 @@ async def subtitles_from_youtube_endpoint(
 
     target_folder = "uploads"
 
-    file_path = os.path.join(target_folder, file.filename)
+    file_path = os.path.join(target_folder, path.filename)
 
-    with open(file.filename, 'w') as buffer:
-        buffer.write(await buffer.read().decode())
-        subtitles_paths.append(buffer.name)
 
-    subtitles = await extract_subtitles_from_youtube(current_user, subtitles_paths, session, chroma_helper)
-
-    return {"subtitles_paths": subtitles_paths}
