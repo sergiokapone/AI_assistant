@@ -1,6 +1,7 @@
 import os
 
 from fastapi import APIRouter, Depends, File, UploadFile
+from fastapi.requests import HTTPConnection
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..database.db_helper import db_helper
@@ -47,7 +48,7 @@ async def text_from_txt_endpoint(
 
     file_path = os.path.join(target_folder, file.filename)
     # Сохраняем загруженный файл
-    with open(file.filename, 'w') as buffer:
+    with open(file_path, 'w') as buffer:
         buffer.write(await buffer.read().decode())
         texts_paths.append(buffer.name)
 

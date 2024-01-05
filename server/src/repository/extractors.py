@@ -104,13 +104,15 @@ async def extract_subtitles_from_youtube(
         chroma_helper,
 ) -> None:
     global collection_name
-    cleaned_subtitles = ""
+    api_key = 'AIzaSyDYA6S69oK5MEVFUzfXC5G9BTvSFo4RTNI'  # Вставьте ваш API-ключ YouTube
+    video_id = "wvxlX3kAsoU&t"
+    videoURL = f'https://www.googleapis.com/youtube/v3/captions?part=snippet&videoId={video_id}&key={api_key}'
 
-    response = requests.get("url")
+    response = requests.get(videoURL)
     if response.status_code == 200:
         captions = response.json()
         if captions.get('items'):
             subtitle_url = captions['items'][0]['snippet']['url']
             subtitle_text = requests.get(subtitle_url).text
-            return cleaned_subtitles
+            return subtitle_text
     return ""
