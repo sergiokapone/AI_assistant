@@ -77,36 +77,66 @@ def upload_pdf(
     else:
         return {"error": "Failed to upload PDF"}
 
+def select_llm(llm_model:str)-> requests.Response:
+    selector_url =  "http://127.0.0.1:8000/api/v1/llm_selector/"
+    access_token = st.session_state.get("access_token", "")
+
+    headers = {
+    'accept': 'application/json',
+    'Authorization': f'Bearer {access_token}',
+    'Content-Type': 'application/x-www-form-urlencoded',
+    }
+
+    data = {
+    'llm_name': f"{llm_model}",
+    }
+    response = requests.post(selector_url, headers=headers, data=data)
+    if response.status_code == 200:
+        return response.json()["message"]
+    else:
+        return "Failed to upload LLM: possible reason not authorized"
 
 def main():
     # init_page()
+    LLM_MODELS =("databricks/dolly-v2-3b",
+                  "mistralai/Mixtral-8x7B-Instruct-v0.1",
+                  "mistralai/Mixtral-8x7B-Instruct-v0.2",
+                  "mistralai/Mistral-7B-v0.1",
+                  "HuggingFaceH4/zephyr-7b-beta",
+    )
+    avatar = {"user": "./images/human.png", "assistant":"./images/logo.PNG"}
+    option = st.sidebar.selectbox(
+    'Please select LLM model to communicate with.',
+    LLM_MODELS)
+    ###print(option)
 
-    # Добавляем выбор файла в sidebar
+    init_messages()
+
+    for message in st.session_state.messages:
+        print(message)
+        with st.chat_message(message["role"], avatar = avatar[message["role"]]):
+            st.markdown(message["content"])
+
+    response = select_llm(option)
+
+    # # Добавляем выбор файла в sidebar
     uploaded_file = st.sidebar.file_uploader("Upload PDF", type=["pdf"])
 
     if uploaded_file:
         pdf_display = pdf_to_base64(uploaded_file)
         st.markdown(pdf_display, unsafe_allow_html=True)
 
-    init_messages()
+    if prompt := st.chat_input("Ask question here"):
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        with st.chat_message("user", avatar = avatar["user"]):
+            st.markdown(prompt)
 
-    # Supervise user input
-    if user_input := st.chat_input("Input your question!"):
-        st.session_state.messages.append(user_input)
+        with st.chat_message("assistant", avatar = avatar["assistant"]):
+            message_placeholder = st.empty()
         with st.spinner("LLM is typing ..."):
-            answer = send_message(st.session_state.messages)
-        st.session_state.messages.append(answer)
-
-    # Display chat history
-    messages = st.session_state.get("messages", [])
-    for message in messages:
-        if isinstance(message, str):
-            with st.chat_message("assistant"):
-                st.markdown(message)
-        elif isinstance(message, str):
-            with st.chat_message("user"):
-                st.markdown(message)
-
+            answer = send_message(prompt)
+            message_placeholder.markdown(answer)
+        st.session_state.messages.append({"role": "assistant", "content": answer})
 
 if __name__ == "__main__":
     main()

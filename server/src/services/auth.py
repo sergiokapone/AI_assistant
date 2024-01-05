@@ -87,7 +87,6 @@ class Auth:
         try:
             # Decode JWT
             payload = jwt.decode(token, self.SECRET_KEY, algorithms=[self.ALGORITHM])
-            print(payload)
             if payload["scope"] == "access_token":
                 email = payload["email"]
                 if email is None:
