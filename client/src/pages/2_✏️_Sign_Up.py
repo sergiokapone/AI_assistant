@@ -2,12 +2,13 @@ import json
 
 import requests
 import streamlit as st
+from config.settings import settings
 
-sign_up_url = "http://127.0.0.1:8000/api/v1/auth/signup"
 USER_EXIST = "Email already exists"
 
 
 def signup_form() -> None:
+    sign_up_url = settings.sign_up_url
     st.set_page_config(page_title="Sign Up", page_icon="✏️")
 
     st.image("./images/bot.PNG", width=500)
@@ -32,6 +33,7 @@ def signup_form() -> None:
         else:
             with st.chat_message(name="assistant", avatar="./images/logo.PNG"):
                 st.write("User was succefully created.")
+
 
 if __name__ == "__main__":
     signup_form()
