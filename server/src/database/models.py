@@ -40,12 +40,21 @@ class User(Base):
     created_at: Mapped[datetime.datetime] = mapped_column(
         "created_at", DateTime, default=func.now()
     )
+
+    # ----- relationships -----
+
     user_questions: Mapped[list["Question"]] = relationship(
-        back_populates="user", cascade="all", passive_deletes=True
+        "Question",
+        back_populates="user",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
     )
 
     user_uploaded_texts: Mapped[list["UploadedText"]] = relationship(
-        back_populates="user", cascade="all", passive_deletes=True
+        "UploadedText",
+        back_populates="user",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
     )
 
 
@@ -59,10 +68,14 @@ class Question(Base):
     question_text: Mapped[str] = mapped_column(Text)
     created_at: Mapped[datetime.datetime] = mapped_column(DateTime, default=func.now())
 
+    # ----- relationships -----
+
     user: Mapped[User] = relationship(
-        back_populates="user_questions", passive_deletes=True
+        "User", back_populates="user_questions", passive_deletes=True
     )
+
     answers: Mapped["Answer"] = relationship(
+        "Answer",
         back_populates="question",
         cascade="all, delete-orphan",
         passive_deletes=True,
@@ -79,8 +92,10 @@ class Answer(Base):
     answer_text: Mapped[str] = mapped_column(Text)
     created_at: Mapped[datetime.datetime] = mapped_column(DateTime, default=func.now())
 
+    # ----- relationships -----
+
     question: Mapped[Question] = relationship(
-        back_populates="answers", passive_deletes=True
+        "Question", back_populates="answers", passive_deletes=True
     )
 
 
@@ -94,8 +109,10 @@ class UploadedText(Base):
     uploaded_text: Mapped[str] = mapped_column(Text)
     created_at: Mapped[datetime.datetime] = mapped_column(DateTime, default=func.now())
 
+    # ----- relationships -----
+
     user: Mapped[User] = relationship(
-        back_populates="user_uploaded_texts", passive_deletes=True
+        "User", back_populates="user_uploaded_texts", passive_deletes=True
     )
 
 
