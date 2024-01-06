@@ -104,7 +104,7 @@ def select_llm(llm_model: str) -> requests.Response:
 
 
 def get_message_history():
-    get_user_by_email_url = "http://127.0.0.1:8000/api/v1/get_history/"
+    get_user_by_email_url = settings.get_history_url
     access_token = st.session_state.get("access_token", "")
     headers = {
         "accept": "application/json",
