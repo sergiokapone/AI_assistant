@@ -63,7 +63,7 @@ class Chain:
         except ValueError:
             return None
 
-    def create_memory(self):
+    def create_memory(self, user_id):
         memory = ConversationBufferMemory(
             memory_key="chat_history", return_messages=True
         )
@@ -76,7 +76,7 @@ class Chain:
             chain = ConversationalRetrievalChain.from_llm(
                 self.llm,
                 context.as_retriever(search_kwargs={"k": 3}),
-                memory=self.create_memory(),
+                memory=self.create_memory(user_id),
             )
         else:
             chain = ConversationChain(
