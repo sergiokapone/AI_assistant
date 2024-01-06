@@ -96,8 +96,14 @@ class Chain:
         else:
             return self.chains[user_id][0].predict(input=query).lstrip()
         
+    
+    async def update(self, user_id):
+        self.chains[user_id] = await self.create_chain(user_id)
+        
 
     async def __call__(self, query, user_id):
         if user_id not in self.chains.keys():
             self.chains[user_id] = await self.create_chain(user_id)
         return self.answer(query, user_id)
+
+chain = Chain()
