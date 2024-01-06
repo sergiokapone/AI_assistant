@@ -6,6 +6,7 @@ from langchain.prompts import PromptTemplate
 from langchain.vectorstores import Chroma
 
 from ..config.settings import settings
+from ..repository.history import extract_history
 from ..vector_db.chroma_init import get_chroma_client
 
 API_KEY = settings.llm_api_key
@@ -34,7 +35,7 @@ prompt_no_context = PromptTemplate.from_template(template_no_context)
 
 
 class Chain:
-    def __init__(self, history=[]):
+    def __init__(self):
         self.llm = HuggingFaceHub(
             repo_id=llm_id,
             huggingfacehub_api_token=API_KEY,
@@ -63,25 +64,29 @@ class Chain:
         except ValueError:
             return None
 
-    def create_memory(self, user_id):
+    async def create_memory(self, user_id):
         memory = ConversationBufferMemory(
             memory_key="chat_history", return_messages=True
         )
+        history = await extract_history(user_id)
+        for i in history:
+            memory.save_context({"input": i[0]}, {"output": i[1]})
+
         return memory
         # later this code will add to the memory messages from the database.
 
-    def create_chain(self, user_id):
+    async def create_chain(self, user_id):
         context = self.create_context(user_id)
         if context:
             chain = ConversationalRetrievalChain.from_llm(
                 self.llm,
                 context.as_retriever(search_kwargs={"k": 3}),
-                memory=self.create_memory(user_id),
+                memory=await self.create_memory(user_id),
             )
         else:
             chain = ConversationChain(
                 llm=self.llm,
-                memory=self.create_memory(user_id),
+                memory=await self.create_memory(user_id),
                 prompt=prompt_no_context,
             )
         return (chain, context is not None)
@@ -93,7 +98,13 @@ class Chain:
         else:
             return self.chains[user_id][0].predict(input=query).lstrip()
 
-    def __call__(self, query, user_id):
+    async def update(self, user_id):
+        self.chains[user_id] = await self.create_chain(user_id)
+
+    async def __call__(self, query, user_id):
         if user_id not in self.chains.keys():
-            self.chains[user_id] = self.create_chain(user_id)
+            self.chains[user_id] = await self.create_chain(user_id)
         return self.answer(query, user_id)
+
+
+chain = Chain()

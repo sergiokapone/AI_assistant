@@ -7,7 +7,7 @@ from ..database.models import User
 from ..repository.llm_selector import llm_selector
 from ..services.auth import auth_service
 
-router = APIRouter(prefix="/llm_selector", tags=["llm_select"])
+router = APIRouter(prefix="/llm_selector", tags=["Chat"])
 
 
 @router.post("/")

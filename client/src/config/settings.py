@@ -8,6 +8,8 @@ class Settings(BaseSettings):
     chat_url: str = base_url + "chat"
     uload_file_url: str = base_url + "upload_pdf/"
     llm_selector_url: str = base_url + "llm_selector/"
+    log_out_url: str = base_url + "auth/logout/"
+    get_history_url: str = base_url + "history/"
 
 
 settings = Settings()

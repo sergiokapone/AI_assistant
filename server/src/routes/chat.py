@@ -7,7 +7,7 @@ from ..repository.chat import respond
 from ..schemas.chat import Response
 from ..services.auth import auth_service
 
-router = APIRouter(prefix="/chat", tags=["chat"])
+router = APIRouter(prefix="/chat", tags=["Chat"])
 
 
 @router.post("/", response_model=Response)
