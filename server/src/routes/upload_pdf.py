@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..database.db_helper import db_helper
 from ..database.models import User
-from ..repository.extractors import extract_text_from_pdf, extract_text_from_txt, extract_subtitles_from_youtube
+from ..repository.extractors import extract_text_from_pdf, extract_text_from_txt  # extract_subtitles_from_youtube
 from ..services.auth import auth_service
 from ..vector_db.chroma_init import get_chroma_client, initialize_chroma_client
 
@@ -56,7 +56,6 @@ async def text_from_txt_endpoint(
     print(text)
 
     return {"texts_paths": texts_paths}
-
 
 # @router.post("/subtitles")
 # async def subtitles_from_youtube_endpoint(
