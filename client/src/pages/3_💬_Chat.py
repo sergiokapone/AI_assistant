@@ -1,12 +1,9 @@
 import base64
-import os
+
 import requests
 import streamlit as st
 from config.settings import settings
 from streamlit.runtime.uploaded_file_manager import UploadedFile
-
-
-from sqlalchemy.ext.asyncio import AsyncSession
 
 # Установка заголовка и иконки страницы
 st.set_page_config(page_title="Chat", page_icon="💬")
@@ -105,8 +102,9 @@ def select_llm(llm_model: str) -> requests.Response:
     else:
         return "Failed to upload LLM: possible reason not authorized"
 
+
 def get_message_history():
-    get_user_by_email_url = "http://127.0.0.1:8000/api/v1/get_user/"
+    get_user_by_email_url = "http://127.0.0.1:8000/api/v1/get_history/"
     access_token = st.session_state.get("access_token", "")
     headers = {
         "accept": "application/json",
@@ -116,10 +114,11 @@ def get_message_history():
 
     response = requests.get(get_user_by_email_url, headers=headers)
     if response.status_code == 200:
-        return response.json()['history']
+        return response.json()["history"]
     else:
         return "Failed to retrieve the message history"
-    
+
+
 def main():
     # Добавляем выбор файла в sidebar
     uploaded_file = st.sidebar.file_uploader("Upload PDF", type=["pdf"])
@@ -152,18 +151,20 @@ def main():
             st.markdown(message["content"])
 
     response = select_llm(option)
-    if 'email' not in st.session_state:
+    if "email" not in st.session_state:
         user_email = "You are not authorized to "
-    else:    
+    else:
         user_email = st.session_state.email
-        message_history = get_message_history()  
+        message_history = get_message_history()
         for message in message_history:
             st.session_state.messages.append({"role": "user", "content": message[0]})
             with st.chat_message("user", avatar=avatar["user"]):
                 st.markdown(message[0])
             with st.chat_message("assistant", avatar=avatar["assistant"]):
                 st.markdown(message[1])
-            st.session_state.messages.append({"role": "assistant", "content": message[1]})
+            st.session_state.messages.append(
+                {"role": "assistant", "content": message[1]}
+            )
 
     if prompt := st.chat_input(f"{user_email} Ask question here"):
         st.session_state.messages.append({"role": "user", "content": prompt})
@@ -176,6 +177,7 @@ def main():
             answer = send_message(prompt)
             message_placeholder.markdown(answer)
         st.session_state.messages.append({"role": "assistant", "content": answer})
+
 
 if __name__ == "__main__":
     main()
