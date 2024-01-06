@@ -96,17 +96,18 @@ async def extract_text_from_txt(
     session.add(uploaded_text)
     await session.commit()
 
+# I can't found good liberalises (((( on youtube
 
-async def extract_subtitles_from_youtube(
-        current_user: User,
-        subtitles_sources: List[Union[str, bytes, tempfile.SpooledTemporaryFile]],
-        session: AsyncSession,
-        chroma_helper,
-) -> None:
-    global collection_name
-    api_key = 'AIzaSyDYA6S69oK5MEVFUzfXC5G9BTvSFo4RTNI'  # Вставьте ваш API-ключ YouTube
-    video_id = "wvxlX3kAsoU&t"
-    videoURL = f'https://www.googleapis.com/youtube/v3/captions?part=snippet&videoId={video_id}&key={api_key}'
+# async def extract_subtitles_from_youtube(
+#         current_user: User,
+#         subtitles_sources: List[Union[str, bytes, tempfile.SpooledTemporaryFile]],
+#         session: AsyncSession,
+#         chroma_helper,
+# ) -> None:
+#     global collection_name
+#     api_key = 'AIzaSyDYA6S69oK5MEVFUzfXC5G9BTvSFo4RTNI'  # Вставьте ваш API-ключ YouTube
+#     video_id = "wvxlX3kAsoU&t"
+#     videoURL = f'https://www.googleapis.com/youtube/v3/captions?part=snippet&videoId={video_id}&key={api_key}'
 
     # response = requests.get(videoURL)
     # if response.status_code == 200:

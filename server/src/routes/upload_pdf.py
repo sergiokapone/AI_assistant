@@ -58,16 +58,16 @@ async def text_from_txt_endpoint(
     return {"texts_paths": texts_paths}
 
 
-@router.post("/subtitles")
-async def subtitles_from_youtube_endpoint(
-        current_user: User = Depends(auth_service.get_authenticated_user),
-        file: UploadFile = Body(),
-        session: AsyncSession = Depends(db_helper.scoped_session_dependency),
-        chroma_helper: initialize_chroma_client = Depends(get_chroma_client),
-):
-    # subtitles_paths = []
-
-    target_folder = "uploads"
-
-    file_path = os.path.join(target_folder, file.filename)
-    print(file_path)
+# @router.post("/subtitles")
+# async def subtitles_from_youtube_endpoint(
+#         current_user: User = Depends(auth_service.get_authenticated_user),
+#         file: UploadFile = Body(),
+#         session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+#         chroma_helper: initialize_chroma_client = Depends(get_chroma_client),
+# ):
+#     # subtitles_paths = []
+#
+#     target_folder = "uploads"
+#
+#     file_path = os.path.join(target_folder, file.filename)
+#     print(file_path)
