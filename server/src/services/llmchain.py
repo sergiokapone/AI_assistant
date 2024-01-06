@@ -76,7 +76,7 @@ class Chain:
             chain = ConversationalRetrievalChain.from_llm(
                 self.llm,
                 context.as_retriever(search_kwargs={"k": 3}),
-                memory=self.create_memory(user_id),
+                memory=self.create_memory(),
             )
         else:
             chain = ConversationChain(
