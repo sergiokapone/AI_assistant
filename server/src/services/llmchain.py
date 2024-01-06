@@ -35,11 +35,11 @@ prompt_no_context = PromptTemplate.from_template(template_no_context)
 
 
 class Chain:
-    def __init__(self):
+    def __init__(self, history=[]):
         self.llm = HuggingFaceHub(
             repo_id=llm_id,
             huggingfacehub_api_token=API_KEY,
-            model_kwargs={"temperature": 0.2, "max_length": 255},
+            model_kwargs={"temperature": 0.3, "max_length": 255},
         )
         self.chains = {}
         self.embedding_function = SentenceTransformerEmbeddings(
