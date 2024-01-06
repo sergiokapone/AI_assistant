@@ -25,6 +25,8 @@ def signin_form() -> None:
             if access_token:
                 # Зберігаємо токен у session_state
                 st.session_state.access_token = access_token
+                st.session_state.email = email
+                
 
                 # Виводимо інформацію про успішну аутентифікацію
                 with st.chat_message(name="assistant", avatar="./images/logo.PNG"):
