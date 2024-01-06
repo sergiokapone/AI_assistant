@@ -35,7 +35,7 @@ prompt_no_context = PromptTemplate.from_template(template_no_context)
 
 
 class Chain:
-    def __init__(self, history=[]):
+    def __init__(self):
         self.llm = HuggingFaceHub(
             repo_id=llm_id,
             huggingfacehub_api_token=API_KEY,
