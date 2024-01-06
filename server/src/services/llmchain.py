@@ -1,4 +1,7 @@
+from langchain.chains import ConversationalRetrievalChain, ConversationChain
+from langchain.embeddings.sentence_transformer import SentenceTransformerEmbeddings
 from langchain.llms import HuggingFaceHub
+from langchain.memory import ConversationBufferMemory
 from langchain.prompts import PromptTemplate
 from langchain.memory import ConversationBufferMemory
 from langchain.schema import StrOutputParser
@@ -6,6 +9,7 @@ from langchain_core.runnables import RunnablePassthrough
 from langchain.embeddings.sentence_transformer import SentenceTransformerEmbeddings
 from langchain.vectorstores import Chroma
 from langchain.chains import ConversationalRetrievalChain, ConversationChain
+from langchain.vectorstores import Chroma
 
 from ..config.settings import settings
 from ..vector_db.chroma_init import get_chroma_client
@@ -20,7 +24,6 @@ transformer_id = "sentence-transformers/all-MiniLM-L6-v2"
 
 template = """Use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer. Use three sentences maximum. Keep the answer as concise as possible.
 {context}
-
 {chat_history}
 Question: {question}
 Helpful Answer:"""
@@ -46,6 +49,7 @@ class Chain:
         self.chains = {}
         self.embedding_function = SentenceTransformerEmbeddings(model_name=transformer_id)
 
+
     def format_docs(self, docs):
         return "\n\n".join(doc.page_content for doc in docs)
     
@@ -64,35 +68,35 @@ class Chain:
             
 
     def create_memory(self, user_id):
-        memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+        memory = ConversationBufferMemory(
+            memory_key="chat_history", return_messages=True
+        )
         return memory
-        #later this code will add to the memory messages from the database.
-
+        # later this code will add to the memory messages from the database.
 
     def create_chain(self, user_id):
         context = self.create_context(user_id)
         if context:
             chain = ConversationalRetrievalChain.from_llm(
                 self.llm,
-                context.as_retriever(search_kwargs={"k":3}),
-                memory=self.create_memory(user_id)
+                context.as_retriever(search_kwargs={"k": 3}),
+                memory=self.create_memory(user_id),
             )
         else:
             chain = ConversationChain(
                 llm=self.llm,
                 memory=self.create_memory(user_id),
-                prompt=prompt_no_context
+                prompt=prompt_no_context,
             )
         return (chain, context is not None)
-    
 
     def answer(self, query, user_id):
         if self.chains[user_id][1]:
-            result = self.chains[user_id][0]({"question":query})
+            result = self.chains[user_id][0]({"question": query})
             return result["answer"].lstrip()
         else:
             return self.chains[user_id][0].predict(input=query).lstrip()
-
+        
 
     def __call__(self, query, user_id):
         if user_id not in self.chains.keys():

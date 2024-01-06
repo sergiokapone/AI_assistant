@@ -1,7 +1,9 @@
 import datetime
 import logging
 
-from sqlalchemy import delete, select
+from fastapi import HTTPException, status
+from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -24,8 +26,18 @@ async def create_user(body: UserSchema, session: AsyncSession) -> User:
 
 async def remove_user(current_user: User, session: AsyncSession):
     try:
-        async with session.begin():
-            await session.execute(delete(User).where(User.id == current_user.id))
+        async with AsyncSession() as new_session:
+            async with new_session.begin():
+                # Удаляем пользователя
+                await new_session.delete(current_user)
+
+    except IntegrityError as e:
+        # IntegrityError может возникнуть, если есть ссылки на пользователя в других таблицах
+        logging.error(f"Error removing user: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error removing user",
+        )
     except Exception as e:
         logging.error(f"Error removing user: {e}")
         raise e
