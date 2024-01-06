@@ -12,6 +12,7 @@ from ..repository.extractors import (
     extract_text_from_txt,
 )
 from ..services.auth import auth_service
+from ..services.llmchain import chain
 from ..vector_db.chroma_init import get_chroma_client, initialize_chroma_client
 
 router = APIRouter(prefix="/uploads", tags=["Chat"])
@@ -52,5 +53,7 @@ async def upload_file(
             )
         case _:
             return {"error": "Unsupported file type"}
+
+    await chain.update(current_user.id)
 
     return {"file_paths": file_paths}
