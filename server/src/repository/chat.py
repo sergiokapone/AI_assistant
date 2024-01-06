@@ -1,13 +1,9 @@
-import pprint
-
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..database.models import Answer, Question, User
 from ..schemas.chat import Response
-from ..services.llmchain import Chain
-
-chain = Chain()
+from ..services.llmchain import chain
 
 
 async def respond(current_user: User, session: AsyncSession, instruction: str) -> str:
@@ -34,7 +30,6 @@ async def respond(current_user: User, session: AsyncSession, instruction: str) -
 async def extract_history(current_user: User, session: AsyncSession) -> list:
     user_history = []
 
-    #    async with session.begin():
     result = await session.execute(
         select(Question, Answer)
         .join(Answer)
