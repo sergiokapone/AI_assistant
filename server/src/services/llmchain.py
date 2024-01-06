@@ -34,7 +34,7 @@ prompt_no_context = PromptTemplate.from_template(template_no_context)
 
 
 class Chain:
-    def __init__(self, history=[]):
+    def __init__(self):
         self.llm = HuggingFaceHub(
             repo_id=llm_id,
             huggingfacehub_api_token=API_KEY,
@@ -63,7 +63,7 @@ class Chain:
         except ValueError:
             return None
 
-    def create_memory(self, user_id):
+    def create_memory(self):
         memory = ConversationBufferMemory(
             memory_key="chat_history", return_messages=True
         )
