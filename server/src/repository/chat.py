@@ -37,14 +37,14 @@ async def respond(current_user: User, session: AsyncSession, instruction: str) -
 async def extract_history(current_user: User, session: AsyncSession) -> list:
     user_history = []
 
-    async with session.begin():
-        result = await session.execute(
+#    async with session.begin():
+    result = await session.execute(
             select(Question, Answer)
             .join(Answer)
             .filter(Question.user_id == current_user.id)
         )
 
-        for question, answer in result.all():
+    for question, answer in result.all():
             user_history.append((question.question_text, answer.answer_text))
 
     return user_history

@@ -16,6 +16,7 @@ fastapi = "^0.108.0"
 streamlit-chat = "^0.1.1"
 pydantic = "^2.5.3"
 pydantic-settings = "^2.1.0"
+sqlalchemy = {extras = ["asyncio"], version = "^2.0.25"}
 
 
 
