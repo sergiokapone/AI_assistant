@@ -53,6 +53,7 @@ async def text_from_txt_endpoint(
 
     # Вызываем функцию извлечения текста из TXT
     text = await extract_text_from_txt(current_user, texts_paths, session, chroma_helper)
+    print(text)
 
     return {"texts_paths": texts_paths}
 
