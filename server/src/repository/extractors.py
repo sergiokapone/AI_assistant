@@ -108,11 +108,11 @@ async def extract_subtitles_from_youtube(
     video_id = "wvxlX3kAsoU&t"
     videoURL = f'https://www.googleapis.com/youtube/v3/captions?part=snippet&videoId={video_id}&key={api_key}'
 
-    response = requests.get(videoURL)
-    if response.status_code == 200:
-        captions = response.json()
-        if captions.get('items'):
-            subtitle_url = captions['items'][0]['snippet']['url']
-            subtitle_text = requests.get(subtitle_url).text
-            return subtitle_text
-    return ""
+    # response = requests.get(videoURL)
+    # if response.status_code == 200:
+    #     captions = response.json()
+    #     if captions.get('items'):
+    #         subtitle_url = captions['items'][0]['snippet']['url']
+    #         subtitle_text = requests.get(subtitle_url).text
+    #         return subtitle_text
+    # return ""
