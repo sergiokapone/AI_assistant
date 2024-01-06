@@ -4,5 +4,7 @@
 .env
 chromadb/
 __pycache__/
-.pdf
+*.pdf
+*.docx
+*.txt
 db.sqlite3
