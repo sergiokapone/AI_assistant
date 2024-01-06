@@ -9,7 +9,7 @@ from ..repository.extractors import extract_text_from_pdf
 from ..services.auth import auth_service
 from ..vector_db.chroma_init import get_chroma_client, initialize_chroma_client
 
-router = APIRouter(prefix="/upload_pdf", tags=["Upload file"])
+router = APIRouter(prefix="/upload_pdf", tags=["Chat"])
 
 
 @router.post("/")
