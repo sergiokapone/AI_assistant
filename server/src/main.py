@@ -12,7 +12,7 @@ from .routes.auth import router as auth_router
 from .routes.chat import router as chat_router
 from .routes.llm_selector import router as llm_selector_router
 from .routes.upload_pdf import router as upload_router
-from .routes.get_users import router as get_user_router
+from .routes.get_history import router as get_user_router
 
 current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
