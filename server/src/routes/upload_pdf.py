@@ -9,6 +9,8 @@ from ..repository.extractors import extract_text_from_pdf
 from ..services.auth import auth_service
 from ..vector_db.chroma_init import get_chroma_client, initialize_chroma_client
 
+from ..services.llmchain import chain
+
 router = APIRouter(prefix="/upload_pdf", tags=["Upload file"])
 
 
@@ -30,5 +32,7 @@ async def upload_pdf(
         pdf_paths.append(buffer.name)
 
     await extract_text_from_pdf(current_user, pdf_paths, session, chroma_helper)
+
+    await chain.update(current_user.id)
 
     return {"pdf_paths": pdf_paths}
