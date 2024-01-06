@@ -6,7 +6,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..database.db_helper import db_helper
 from ..database.models import User
-from ..repository.extractors import extract_text_from_pdf, extract_text_from_txt
+from ..repository.extractors import (
+    extract_text_from_docx,
+    extract_text_from_pdf,
+    extract_text_from_txt,
+)
 from ..services.auth import auth_service
 from ..vector_db.chroma_init import get_chroma_client, initialize_chroma_client
 
@@ -40,6 +44,10 @@ async def upload_file(
             )
         case "text/plain":
             await extract_text_from_txt(
+                current_user, file_paths, session, chroma_helper
+            )
+        case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+            await extract_text_from_docx(
                 current_user, file_paths, session, chroma_helper
             )
         case _:
