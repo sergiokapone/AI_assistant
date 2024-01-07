@@ -55,7 +55,7 @@ def send_message(message):
         return {"error": "Failed to send message"}
 
 
-def upload_pdf(
+def upload_file(
     uploaded_file: UploadedFile,
 ) -> requests.Response:
     upload_url = settings.uload_file_url
@@ -78,7 +78,7 @@ def upload_pdf(
     )
 
     if response.status_code == 200:
-        return response.json()["pdf_paths"]
+        return {"message": "File uploaded successfully"}
     else:
         return {"error": "Failed to upload PDF"}
 
@@ -121,7 +121,7 @@ def get_message_history():
 
 def main():
     # Добавляем выбор файла в sidebar
- 
+
     # init_page()
     LLM_MODELS = (
         "databricks/dolly-v2-3b",
@@ -133,10 +133,9 @@ def main():
     avatar = {"user": "./images/human.png", "assistant": "./images/logo.PNG"}
     ###print(option)
 
-   
     if "email" not in st.session_state:
-        with st.chat_message("assistant", avatar = avatar["assistant"]):
-            st.write("You are not authenticated. Please sign in.") 
+        with st.chat_message("assistant", avatar=avatar["assistant"]):
+            st.write("You are not authenticated. Please sign in.")
     else:
         user_email = st.session_state.email
         message_history = get_message_history()
@@ -146,20 +145,24 @@ def main():
             with st.chat_message(message["role"], avatar=avatar[message["role"]]):
                 st.markdown(message["content"])
 
-        uploaded_file = st.sidebar.file_uploader("Upload PDF", type=["pdf"])
+        uploaded_file = st.sidebar.file_uploader(
+            "Upload File", type=["pdf", "txt", "docx"]
+        )
         if uploaded_file:
-            pdf_display = pdf_to_base64(uploaded_file)
-            st.markdown(pdf_display, unsafe_allow_html=True)
-            upload_pdf(uploaded_file)
-        
+            # pdf_display = pdf_to_base64(uploaded_file)
+            # st.markdown(pdf_display, unsafe_allow_html=True)
+            upload_file(uploaded_file)
+
         option = st.sidebar.selectbox(
-        "Please select LLM model to communicate with.", LLM_MODELS
+            "Please select LLM model to communicate with.", LLM_MODELS
         )
         response = select_llm(option)
 
         if st.sidebar.button("Retrive chat history."):
             for message in message_history:
-                st.session_state.messages.append({"role": "user", "content": message[0]})
+                st.session_state.messages.append(
+                    {"role": "user", "content": message[0]}
+                )
                 with st.chat_message("user", avatar=avatar["user"]):
                     st.markdown(message[0])
                 with st.chat_message("assistant", avatar=avatar["assistant"]):
@@ -167,7 +170,6 @@ def main():
                 st.session_state.messages.append(
                     {"role": "assistant", "content": message[1]}
                 )
-
 
         if prompt := st.chat_input(f"{user_email} Ask question here"):
             st.session_state.messages.append({"role": "user", "content": prompt})
