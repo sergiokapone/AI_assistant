@@ -1,5 +1,3 @@
-import base64
-
 import requests
 import streamlit as st
 from config.settings import settings
@@ -13,13 +11,6 @@ st.image("./images/bot.PNG", width=500)
 
 # Заголовок боковой панели
 st.sidebar.header("Chat")
-
-
-@st.cache_data
-def pdf_to_base64(uploaded_file: UploadedFile) -> str:
-    """Display the PDF as an embedded b64 string in a markdown component"""
-    base64_pdf = base64.b64encode(uploaded_file.getvalue()).decode("utf-8")
-    return f'<embed src="data:application/pdf;base64,{base64_pdf}" width=100% height=800 type="application/pdf">'
 
 
 def init_page():
@@ -138,7 +129,6 @@ def main():
             st.write("You are not authenticated. Please sign in.")
     else:
         user_email = st.session_state.email
-        message_history = get_message_history()
 
         init_messages()
         for message in st.session_state.messages:
@@ -159,6 +149,7 @@ def main():
         response = select_llm(option)
 
         if st.sidebar.button("Retrive chat history."):
+            message_history = get_message_history()
             for message in message_history:
                 st.session_state.messages.append(
                     {"role": "user", "content": message[0]}
