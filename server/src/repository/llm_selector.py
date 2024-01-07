@@ -2,6 +2,7 @@ from sqlalchemy import update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..database.models import User
+from ..services.llmchain import chain
 
 
 async def llm_selector(
@@ -12,3 +13,4 @@ async def llm_selector(
     smtp = update(User).where(User.id == current_user.id).values(selected_llm=llm_name)
     await session.execute(smtp)
     await session.commit()
+    await chain.update(current_user.id)
