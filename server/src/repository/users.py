@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 import logging
 
 from fastapi import HTTPException, status

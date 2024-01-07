@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     chat_url: str = base_url + "chat"
     uload_file_url: str = base_url + "upload_pdf/"
     llm_selector_url: str = base_url + "llm_selector/"
-    get_history_url: str = base_url + "history/"
+    get_history_url: str = base_url + "get_history/"
 
 
 settings = Settings()

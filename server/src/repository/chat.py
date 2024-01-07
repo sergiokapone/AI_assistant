@@ -35,7 +35,7 @@ async def extract_history(current_user: User, session: AsyncSession) -> list:
         .join(Answer)
         .filter(Question.user_id == current_user.id)
     )
-
+    #######print(result)
     for question, answer in result.all():
         user_history.append((question.question_text, answer.answer_text))
 

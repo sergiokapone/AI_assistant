@@ -121,14 +121,7 @@ def get_message_history():
 
 def main():
     # Добавляем выбор файла в sidebar
-    uploaded_file = st.sidebar.file_uploader("Upload PDF", type=["pdf"])
-
-    if uploaded_file:
-        pdf_display = pdf_to_base64(uploaded_file)
-        st.markdown(pdf_display, unsafe_allow_html=True)
-
-        upload_pdf(uploaded_file)
-
+ 
     # init_page()
     LLM_MODELS = (
         "databricks/dolly-v2-3b",
@@ -138,45 +131,55 @@ def main():
         "HuggingFaceH4/zephyr-7b-beta",
     )
     avatar = {"user": "./images/human.png", "assistant": "./images/logo.PNG"}
-    option = st.sidebar.selectbox(
-        "Please select LLM model to communicate with.", LLM_MODELS
-    )
     ###print(option)
 
-    init_messages()
-
-    for message in st.session_state.messages:
-        print(message)
-        with st.chat_message(message["role"], avatar=avatar[message["role"]]):
-            st.markdown(message["content"])
-
-    response = select_llm(option)
+   
     if "email" not in st.session_state:
-        user_email = "You are not authorized to "
+        with st.chat_message("assistant", avatar = avatar["assistant"]):
+            st.write("You are not authenticated. Please sign in.") 
     else:
         user_email = st.session_state.email
         message_history = get_message_history()
-        for message in message_history:
-            st.session_state.messages.append({"role": "user", "content": message[0]})
+
+        init_messages()
+        for message in st.session_state.messages:
+            with st.chat_message(message["role"], avatar=avatar[message["role"]]):
+                st.markdown(message["content"])
+
+        uploaded_file = st.sidebar.file_uploader("Upload PDF", type=["pdf"])
+        if uploaded_file:
+            pdf_display = pdf_to_base64(uploaded_file)
+            st.markdown(pdf_display, unsafe_allow_html=True)
+            upload_pdf(uploaded_file)
+        
+        option = st.sidebar.selectbox(
+        "Please select LLM model to communicate with.", LLM_MODELS
+        )
+        response = select_llm(option)
+
+        if st.sidebar.button("Retrive chat history."):
+            for message in message_history:
+                st.session_state.messages.append({"role": "user", "content": message[0]})
+                with st.chat_message("user", avatar=avatar["user"]):
+                    st.markdown(message[0])
+                with st.chat_message("assistant", avatar=avatar["assistant"]):
+                    st.markdown(message[1])
+                st.session_state.messages.append(
+                    {"role": "assistant", "content": message[1]}
+                )
+
+
+        if prompt := st.chat_input(f"{user_email} Ask question here"):
+            st.session_state.messages.append({"role": "user", "content": prompt})
             with st.chat_message("user", avatar=avatar["user"]):
-                st.markdown(message[0])
+                st.markdown(prompt)
+
             with st.chat_message("assistant", avatar=avatar["assistant"]):
-                st.markdown(message[1])
-            st.session_state.messages.append(
-                {"role": "assistant", "content": message[1]}
-            )
-
-    if prompt := st.chat_input(f"{user_email} Ask question here"):
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user", avatar=avatar["user"]):
-            st.markdown(prompt)
-
-        with st.chat_message("assistant", avatar=avatar["assistant"]):
-            message_placeholder = st.empty()
-        with st.spinner("LLM is typing ..."):
-            answer = send_message(prompt)
-            message_placeholder.markdown(answer)
-        st.session_state.messages.append({"role": "assistant", "content": answer})
+                message_placeholder = st.empty()
+            with st.spinner("LLM is typing ..."):
+                answer = send_message(prompt)
+                message_placeholder.markdown(answer)
+            st.session_state.messages.append({"role": "assistant", "content": answer})
 
 
 if __name__ == "__main__":
