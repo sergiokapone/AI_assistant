@@ -17,9 +17,9 @@ def signup_form() -> None:
     st.sidebar.header("Sign Up")
 
     container = st.container(border=True)
+    username = container.text_input("Username")
     email = container.text_input("Email")
     password = container.text_input("Password")
-    username = container.text_input("Username")
     input = {"username": username, "email": email, "password": password}
 
     if st.button("Sign Up"):
