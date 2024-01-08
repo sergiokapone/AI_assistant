@@ -9,6 +9,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from ..database.models import BlacklistToken, User
 from ..schemas.users import UserSchema
+from ..services.llmchain import chain
 
 
 async def create_user(body: UserSchema, session: AsyncSession) -> User:
@@ -30,6 +31,7 @@ async def remove_user(current_user: User, session: AsyncSession):
             async with new_session.begin():
                 # Удаляем пользователя
                 await new_session.delete(current_user)
+        chain.delete_chain(current_user.id)
 
     except IntegrityError as e:
         # IntegrityError может возникнуть, если есть ссылки на пользователя в других таблицах
