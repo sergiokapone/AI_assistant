@@ -1,5 +1,5 @@
-from datetime import datetime
 import logging
+from datetime import datetime
 
 from fastapi import HTTPException, status
 from sqlalchemy import select
@@ -27,21 +27,30 @@ async def create_user(body: UserSchema, session: AsyncSession) -> User:
 
 async def remove_user(current_user: User, session: AsyncSession):
     try:
-        async with AsyncSession() as new_session:
-            async with new_session.begin():
-                # Удаляем пользователя
-                await new_session.delete(current_user)
-        chain.delete_chain(current_user.id)
+        # Downloading a user from the database using the current session
+        user_to_remove = await session.get(User, current_user.id)
 
+        if user_to_remove:
+            await session.delete(user_to_remove)
+            await session.commit()
+            chain.delete_chain(current_user.id)
+        else:
+            logging.error("User not found in the session.")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found",
+            )
     except IntegrityError as e:
         # IntegrityError может возникнуть, если есть ссылки на пользователя в других таблицах
         logging.error(f"Error removing user: {e}")
+        await session.rollback()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error removing user",
         )
     except Exception as e:
         logging.error(f"Error removing user: {e}")
+        await session.rollback()
         raise e
 
 
