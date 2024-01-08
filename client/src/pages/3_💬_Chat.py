@@ -1,5 +1,3 @@
-import base64
-
 import requests
 import streamlit as st
 from config.settings import settings
@@ -13,13 +11,6 @@ st.image("./images/bot.PNG", width=500)
 
 # Заголовок боковой панели
 st.sidebar.header("Chat")
-
-
-@st.cache_data
-def pdf_to_base64(uploaded_file: UploadedFile) -> str:
-    """Display the PDF as an embedded b64 string in a markdown component"""
-    base64_pdf = base64.b64encode(uploaded_file.getvalue()).decode("utf-8")
-    return f'<embed src="data:application/pdf;base64,{base64_pdf}" width=100% height=800 type="application/pdf">'
 
 
 def init_page():
@@ -67,7 +58,6 @@ def upload_file(
     }
 
     file_name: str = uploaded_file.name
-    print(file_name)
 
     files = {"file": (file_name, uploaded_file)}
 
@@ -138,27 +128,10 @@ def main():
             st.write("You are not authenticated. Please sign in.")
     else:
         user_email = st.session_state.email
-        message_history = get_message_history()
 
         init_messages()
-        for message in st.session_state.messages:
-            with st.chat_message(message["role"], avatar=avatar[message["role"]]):
-                st.markdown(message["content"])
-
-        uploaded_file = st.sidebar.file_uploader(
-            "Upload File", type=["pdf", "txt", "docx"]
-        )
-        if uploaded_file:
-            # pdf_display = pdf_to_base64(uploaded_file)
-            # st.markdown(pdf_display, unsafe_allow_html=True)
-            upload_file(uploaded_file)
-
-        option = st.sidebar.selectbox(
-            "Please select LLM model to communicate with.", LLM_MODELS
-        )
-        response = select_llm(option)
-
         if st.sidebar.button("Retrive chat history."):
+            message_history = get_message_history()
             for message in message_history:
                 st.session_state.messages.append(
                     {"role": "user", "content": message[0]}
@@ -170,6 +143,22 @@ def main():
                 st.session_state.messages.append(
                     {"role": "assistant", "content": message[1]}
                 )
+        for message in st.session_state.messages:
+            with st.chat_message(message["role"], avatar=avatar[message["role"]]):
+                st.markdown(message["content"])
+
+        uploaded_file = st.sidebar.file_uploader(
+            "Upload File", type=["pdf", "txt", "docx"]
+        )
+
+        if uploaded_file and not st.session_state.get("file_uploaded", False):
+            st.session_state.file_uploaded = True
+            upload_file(uploaded_file)
+
+        option = st.sidebar.selectbox(
+            "Please select LLM model to communicate with.", LLM_MODELS
+        )
+        response = select_llm(option)
 
         if prompt := st.chat_input(f"{user_email} Ask question here"):
             st.session_state.messages.append({"role": "user", "content": prompt})

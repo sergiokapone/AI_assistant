@@ -17,7 +17,10 @@ async def extract_history(user_id: int) -> list:
     
     session.close()
 
+    await session.close()
+
     return user_history
+
 
 async def get_selected_llm(user_id: int) -> str:
     session = db_helper.get_scoped_session()

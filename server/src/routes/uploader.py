@@ -28,6 +28,12 @@ async def upload_file(
     file_paths = []
 
     target_folder = "uploads"
+
+    # Проверяем существование папки
+    if not os.path.exists(target_folder):
+        # Если папка не существует, создаем её
+        os.makedirs(target_folder)
+
     file_path = os.path.join(target_folder, file.filename)
 
     with open(file_path, "wb") as buffer:
