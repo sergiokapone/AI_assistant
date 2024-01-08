@@ -13,19 +13,6 @@ st.image("./images/bot.PNG", width=500)
 st.sidebar.header("Chat")
 
 
-def init_page():
-    st.set_page_config(page_title="Personal ChatGPT")
-    st.header("Personal ChatGPT")
-    st.sidebar.title("Options")
-
-
-def init_messages():
-    clear_button = st.sidebar.button("Clear Conversation", key="clear")
-    if clear_button or "messages" not in st.session_state:
-        st.session_state.messages = []
-        st.session_state.costs = []
-
-
 def send_message(message):
     chat_url = settings.chat_url
     access_token = st.session_state.get("access_token", "")
@@ -109,68 +96,84 @@ def get_message_history():
         return "Failed to retrieve the message history"
 
 
-def main():
-    # Добавляем выбор файла в sidebar
+def clear_messages_btn():
+    clear_button = st.sidebar.button("Clear Conversation", key="clear")
+    if clear_button:
+        st.session_state.messages = []
 
-    # init_page()
-    LLM_MODELS = (
-        "databricks/dolly-v2-3b",
-        "mistralai/Mixtral-8x7B-Instruct-v0.1",
-        "mistralai/Mixtral-8x7B-Instruct-v0.2",
-        "mistralai/Mistral-7B-v0.1",
-        "HuggingFaceH4/zephyr-7b-beta",
+
+def retrive_messages_btn(avatar):
+    if st.sidebar.button("Retrive chat history."):
+        retrive_messages(avatar)
+
+
+def retrive_messages(avatar):
+    message_history = get_message_history()
+    if "messages" in st.session_state:
+        for message in message_history:
+            st.session_state.messages.append({"role": "user", "content": message[0]})
+            with st.chat_message("user", avatar=avatar["user"]):
+                st.markdown(message[0])
+            with st.chat_message("assistant", avatar=avatar["assistant"]):
+                st.markdown(message[1])
+            st.session_state.messages.append(
+                {"role": "assistant", "content": message[1]}
+            )
+
+
+def upload_file_btn():
+    uploaded_file = st.sidebar.file_uploader("Upload File", type=["pdf", "txt", "docx"])
+
+    if uploaded_file and not st.session_state.get("file_uploaded", False):
+        st.session_state.file_uploaded = True
+        upload_file(uploaded_file)
+
+
+def select_llm_el():
+    option = st.sidebar.selectbox(
+        "Please select LLM model to communicate with.", settings.LLM_MODELS
     )
+    select_llm(option)
+
+
+def session_init(avatar):
+    st.session_state.messages = []
+    retrive_messages(avatar)
+
+
+def main():
     avatar = {"user": "./images/human.png", "assistant": "./images/logo.PNG"}
-    ###print(option)
 
     if "email" not in st.session_state:
         with st.chat_message("assistant", avatar=avatar["assistant"]):
             st.write("You are not authenticated. Please sign in.")
-    else:
-        user_email = st.session_state.email
+        return
 
-        init_messages()
-        if st.sidebar.button("Retrive chat history."):
-            message_history = get_message_history()
-            for message in message_history:
-                st.session_state.messages.append(
-                    {"role": "user", "content": message[0]}
-                )
-                with st.chat_message("user", avatar=avatar["user"]):
-                    st.markdown(message[0])
-                with st.chat_message("assistant", avatar=avatar["assistant"]):
-                    st.markdown(message[1])
-                st.session_state.messages.append(
-                    {"role": "assistant", "content": message[1]}
-                )
-        for message in st.session_state.messages:
-            with st.chat_message(message["role"], avatar=avatar[message["role"]]):
-                st.markdown(message["content"])
+    user_email = st.session_state.email
 
-        uploaded_file = st.sidebar.file_uploader(
-            "Upload File", type=["pdf", "txt", "docx"]
-        )
+    session_init(avatar)
 
-        if uploaded_file and not st.session_state.get("file_uploaded", False):
-            st.session_state.file_uploaded = True
-            upload_file(uploaded_file)
+    clear_messages_btn()
+    retrive_messages_btn(avatar)
 
-        option = st.sidebar.selectbox(
-            "Please select LLM model to communicate with.", LLM_MODELS
-        )
-        response = select_llm(option)
+    upload_file_btn()
+    select_llm_el()
 
-        if prompt := st.chat_input(f"{user_email} Ask question here"):
-            st.session_state.messages.append({"role": "user", "content": prompt})
-            with st.chat_message("user", avatar=avatar["user"]):
-                st.markdown(prompt)
+    # for message in st.session_state.messages:
+    #     with st.chat_message(message["role"], avatar=avatar[message["role"]]):
+    #         st.markdown(message["content"])
 
-            with st.chat_message("assistant", avatar=avatar["assistant"]):
-                message_placeholder = st.empty()
-            with st.spinner("LLM is typing ..."):
-                answer = send_message(prompt)
-                message_placeholder.markdown(answer)
-            st.session_state.messages.append({"role": "assistant", "content": answer})
+    if prompt := st.chat_input(f"{user_email} Ask question here"):
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        with st.chat_message("user", avatar=avatar["user"]):
+            st.markdown(prompt)
+
+        with st.chat_message("assistant", avatar=avatar["assistant"]):
+            message_placeholder = st.empty()
+        with st.spinner("LLM is typing ..."):
+            answer = send_message(prompt)
+            message_placeholder.markdown(answer)
+        st.session_state.messages.append({"role": "assistant", "content": answer})
 
 
 if __name__ == "__main__":
