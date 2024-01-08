@@ -9,6 +9,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from ..database.models import BlacklistToken, User
 from ..schemas.users import UserSchema
+from ..services.llmchain import chain
 
 
 async def create_user(body: UserSchema, session: AsyncSession) -> User:
@@ -32,13 +33,13 @@ async def remove_user(current_user: User, session: AsyncSession):
         if user_to_remove:
             await session.delete(user_to_remove)
             await session.commit()
+            chain.delete_chain(current_user.id)
         else:
             logging.error("User not found in the session.")
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="User not found",
             )
-
     except IntegrityError as e:
         # IntegrityError может возникнуть, если есть ссылки на пользователя в других таблицах
         logging.error(f"Error removing user: {e}")

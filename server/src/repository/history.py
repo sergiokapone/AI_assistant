@@ -14,6 +14,8 @@ async def extract_history(user_id: int) -> list:
 
     for question, answer in result.all():
         user_history.append((question.question_text, answer.answer_text))
+    
+    session.close()
 
     await session.close()
 
