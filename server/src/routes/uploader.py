@@ -35,7 +35,6 @@ async def upload_file(
         os.makedirs(target_folder)
 
     file_path = os.path.join(target_folder, file.filename)
-
     with open(file_path, "wb") as buffer:
         buffer.write(await file.read())
         file_paths.append(buffer.name)
