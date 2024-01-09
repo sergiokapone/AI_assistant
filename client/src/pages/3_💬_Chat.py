@@ -122,18 +122,13 @@ def retrive_messages(avatar):
 
 
 def upload_file_btn():
-#    uploaded_file = st.sidebar.file_uploader("Upload File", type=["pdf", "txt", "docx"])
+    #    uploaded_file = st.sidebar.file_uploader("Upload File", type=["pdf", "txt", "docx"])
     # if uploaded_file and not st.session_state.get("file_uploaded", False):
     #     st.session_state.file_uploaded = True
     #     upload_file(uploaded_file)
-    # Этот код не работает, работает то, что написано внизу. 
-    # Пожалуйста, не удаляй его. 
-    # Все файлы хорошо загружаются и анализируются. 
 
     if uploaded_file := st.sidebar.file_uploader("Upload File"):
         upload_file(uploaded_file)
-
-
 
 
 def select_llm_el():
@@ -146,9 +141,10 @@ def select_llm_el():
 def session_init(avatar):
     # st.session_state.messages = []
     # retrive_messages(avatar)
-# так не работает, потому что вся история переписки постоянно висит на экране
+
     if "messages" not in st.session_state:
         st.session_state.messages = []
+
 
 def main():
     avatar = {"user": "./images/human.png", "assistant": "./images/logo.PNG"}
