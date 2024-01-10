@@ -54,7 +54,6 @@ def upload_file(
         headers=headers,
     )
 
-
     if response.status_code == 200:
         return {"message": "File uploaded successfully", "response": response.json()}
     else:
@@ -128,9 +127,10 @@ def upload_file_btn():
     #     st.session_state.file_uploaded = True
     #     upload_file(uploaded_file)
 
-    if uploaded_file := st.sidebar.file_uploader("Upload File", type=["pdf", "txt", "docx"]):
-        feedback = upload_file(uploaded_file)
-        # print(feedback)
+    if uploaded_file := st.sidebar.file_uploader(
+        "Upload File", type=["pdf", "txt", "docx"]
+    ):
+        upload_file(uploaded_file)
 
 
 def select_llm_el():
