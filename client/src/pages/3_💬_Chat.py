@@ -55,9 +55,9 @@ def upload_file(
     )
 
     if response.status_code == 200:
-        return {"message": "File uploaded successfully"}
+        return {"message": "File uploaded successfully", "response": response.json()}
     else:
-        return {"error": "Failed to upload PDF"}
+        return {"error": "Failed to upload PDF", "response": response.json()}
 
 
 def select_llm(llm_model: str) -> requests.Response:
@@ -128,7 +128,8 @@ def upload_file_btn():
     #     upload_file(uploaded_file)
 
     if uploaded_file := st.sidebar.file_uploader("Upload File"):
-        upload_file(uploaded_file)
+        feedback = upload_file(uploaded_file)
+        # print(feedback)
 
 
 def select_llm_el():
@@ -138,7 +139,7 @@ def select_llm_el():
     select_llm(option)
 
 
-def session_init(avatar):
+def session_init():
     # st.session_state.messages = []
     # retrive_messages(avatar)
 
@@ -156,7 +157,7 @@ def main():
 
     user_email = st.session_state.email
 
-    session_init(avatar)
+    session_init()
 
     clear_messages_btn()
     retrive_messages_btn(avatar)
@@ -164,9 +165,9 @@ def main():
     upload_file_btn()
     select_llm_el()
 
-    # for message in st.session_state.messages:
-    #     with st.chat_message(message["role"], avatar=avatar[message["role"]]):
-    #         st.markdown(message["content"])
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"], avatar=avatar[message["role"]]):
+            st.markdown(message["content"])
 
     if prompt := st.chat_input(f"{user_email} Ask question here"):
         st.session_state.messages.append({"role": "user", "content": prompt})
