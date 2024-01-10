@@ -1,5 +1,3 @@
-import base64
-
 import requests
 import streamlit as st
 from config.settings import settings
@@ -13,26 +11,6 @@ st.image("./images/bot.PNG", width=500)
 
 # Заголовок боковой панели
 st.sidebar.header("Chat")
-
-
-@st.cache_data
-def pdf_to_base64(uploaded_file: UploadedFile) -> str:
-    """Display the PDF as an embedded b64 string in a markdown component"""
-    base64_pdf = base64.b64encode(uploaded_file.getvalue()).decode("utf-8")
-    return f'<embed src="data:application/pdf;base64,{base64_pdf}" width=100% height=800 type="application/pdf">'
-
-
-def init_page():
-    st.set_page_config(page_title="Personal ChatGPT")
-    st.header("Personal ChatGPT")
-    st.sidebar.title("Options")
-
-
-def init_messages():
-    clear_button = st.sidebar.button("Clear Conversation", key="clear")
-    if clear_button or "messages" not in st.session_state:
-        st.session_state.messages = []
-        st.session_state.costs = []
 
 
 def send_message(message):
@@ -55,7 +33,7 @@ def send_message(message):
         return {"error": "Failed to send message"}
 
 
-def upload_pdf(
+def upload_file(
     uploaded_file: UploadedFile,
 ) -> requests.Response:
     upload_url = settings.uload_file_url
@@ -67,7 +45,6 @@ def upload_pdf(
     }
 
     file_name: str = uploaded_file.name
-    print(file_name)
 
     files = {"file": (file_name, uploaded_file)}
 
@@ -77,10 +54,11 @@ def upload_pdf(
         headers=headers,
     )
 
+ 
     if response.status_code == 200:
-        return response.json()["pdf_paths"]
+        return {"message": "File uploaded successfully", "response": response.json()}
     else:
-        return {"error": "Failed to upload PDF"}
+        return {"error": "Failed to upload PDF", "response": response.json()}
 
 
 def select_llm(llm_model: str) -> requests.Response:
@@ -119,43 +97,20 @@ def get_message_history():
         return "Failed to retrieve the message history"
 
 
-def main():
-    # Добавляем выбор файла в sidebar
-    uploaded_file = st.sidebar.file_uploader("Upload PDF", type=["pdf"])
+def clear_messages_btn():
+    clear_button = st.sidebar.button("Clear Conversation", key="clear")
+    if clear_button:
+        st.session_state.messages = []
 
-    if uploaded_file:
-        pdf_display = pdf_to_base64(uploaded_file)
-        st.markdown(pdf_display, unsafe_allow_html=True)
 
-        upload_pdf(uploaded_file)
+def retrive_messages_btn(avatar):
+    if st.sidebar.button("Retrieve chat history."):
+        retrive_messages(avatar)
 
-    # init_page()
-    LLM_MODELS = (
-        "databricks/dolly-v2-3b",
-        "mistralai/Mixtral-8x7B-Instruct-v0.1",
-        "mistralai/Mixtral-8x7B-Instruct-v0.2",
-        "mistralai/Mistral-7B-v0.1",
-        "HuggingFaceH4/zephyr-7b-beta",
-    )
-    avatar = {"user": "./images/human.png", "assistant": "./images/logo.PNG"}
-    option = st.sidebar.selectbox(
-        "Please select LLM model to communicate with.", LLM_MODELS
-    )
-    ###print(option)
 
-    init_messages()
-
-    for message in st.session_state.messages:
-        print(message)
-        with st.chat_message(message["role"], avatar=avatar[message["role"]]):
-            st.markdown(message["content"])
-
-    response = select_llm(option)
-    if "email" not in st.session_state:
-        user_email = "You are not authorized to "
-    else:
-        user_email = st.session_state.email
-        message_history = get_message_history()
+def retrive_messages(avatar):
+    message_history = get_message_history()
+    if "messages" in st.session_state:
         for message in message_history:
             st.session_state.messages.append({"role": "user", "content": message[0]})
             with st.chat_message("user", avatar=avatar["user"]):
@@ -165,6 +120,55 @@ def main():
             st.session_state.messages.append(
                 {"role": "assistant", "content": message[1]}
             )
+
+
+def upload_file_btn():
+    #    uploaded_file = st.sidebar.file_uploader("Upload File", type=["pdf", "txt", "docx"])
+    # if uploaded_file and not st.session_state.get("file_uploaded", False):
+    #     st.session_state.file_uploaded = True
+    #     upload_file(uploaded_file)
+
+    if uploaded_file := st.sidebar.file_uploader("Upload File"):
+        feedback = upload_file(uploaded_file)
+        # print(feedback)
+
+
+def select_llm_el():
+    option = st.sidebar.selectbox(
+        "Please select LLM model to communicate with.", settings.LLM_MODELS
+    )
+    select_llm(option)
+
+
+def session_init(avatar):
+    # st.session_state.messages = []
+    # retrive_messages(avatar)
+
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
+
+
+def main():
+    avatar = {"user": "./images/human.png", "assistant": "./images/logo.PNG"}
+
+    if "email" not in st.session_state:
+        with st.chat_message("assistant", avatar=avatar["assistant"]):
+            st.write("You are not authenticated. Please sign in.")
+        return
+
+    user_email = st.session_state.email
+
+    session_init(avatar)
+
+    clear_messages_btn()
+    retrive_messages_btn(avatar)
+
+    upload_file_btn()
+    select_llm_el()
+
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"], avatar=avatar[message["role"]]):
+            st.markdown(message["content"])
 
     if prompt := st.chat_input(f"{user_email} Ask question here"):
         st.session_state.messages.append({"role": "user", "content": prompt})

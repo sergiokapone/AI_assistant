@@ -28,8 +28,19 @@ async def upload_file(
     file_paths = []
 
     target_folder = "uploads"
-    file_path = os.path.join(target_folder, file.filename)
 
+    # Проверяем существование папки
+    if not os.path.exists(target_folder):
+        # Если папка не существует, создаем её
+        os.makedirs(target_folder)
+
+###################
+## In case if file already exists skip all the steps about upload and signal the response        
+    file_path = os.path.join(target_folder, file.filename)
+    if os.path.exists(file_path):
+        return("ALREADY_EXISTS")
+###################
+    
     with open(file_path, "wb") as buffer:
         buffer.write(await file.read())
         file_paths.append(buffer.name)
