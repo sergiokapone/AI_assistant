@@ -24,13 +24,16 @@ if "messages" in st.session_state:
 
 if "email" in st.session_state:
     if st.sidebar.button("Log Out", on_click=click_button):
+
         access_token = st.session_state.get("access_token", "")
         headers = {
             "accept": "application/json",
             "Authorization": f"Bearer {access_token}",
             "Content-Type": "application/x-www-form-urlencoded",
         }
+        
         data = {"credentials": access_token}
+
         response = requests.post(log_out_url, headers=headers, data=data)
         st.sidebar.write(response.json()["message"])
         if response.status_code == 200:
@@ -38,3 +41,4 @@ if "email" in st.session_state:
 else:
     with st.chat_message("assistant", avatar=avatar["assistant"]):
         st.write("You are not authenticated. Please sign in.")
+

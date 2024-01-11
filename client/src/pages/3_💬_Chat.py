@@ -54,6 +54,7 @@ def upload_file(
         headers=headers,
     )
 
+ 
     if response.status_code == 200:
         return {"message": "File uploaded successfully", "response": response.json()}
     else:
@@ -133,6 +134,7 @@ def upload_file_btn():
         upload_file(uploaded_file)
 
 
+
 def select_llm_el():
     option = st.sidebar.selectbox(
         "Please select LLM model to communicate with.", settings.LLM_MODELS
@@ -141,6 +143,7 @@ def select_llm_el():
 
 
 def session_init():
+
     # st.session_state.messages = []
     # retrive_messages(avatar)
 
