@@ -5,4 +5,5 @@
 chromadb/
 __pycache__/
 server/alembic/__pycache__/
+alembic/versions/
 .pdf

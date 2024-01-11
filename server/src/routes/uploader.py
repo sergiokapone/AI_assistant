@@ -34,6 +34,21 @@ async def upload_file(
         # Если папка не существует, создаем её
         os.makedirs(target_folder)
 
+    # In case if file already exists skip all the steps about upload and signal the response
+
+    file_name, file_extension = os.path.splitext(file.filename)
+    file_name_with_id = f"{file_name}_{current_user.id}"
+    file_path = os.path.join(target_folder, f"{file_name_with_id}{file_extension}")
+
+    if os.path.exists(file_path):
+        return {"warning": "File already exists"}
+
+
+    # Проверяем существование папки
+    if not os.path.exists(target_folder):
+        # Если папка не существует, создаем её
+        os.makedirs(target_folder)
+
 ###################
 ## In case if file already exists skip all the steps about upload and signal the response        
     file_path = os.path.join(target_folder, file.filename)

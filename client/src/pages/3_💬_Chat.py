@@ -128,9 +128,11 @@ def upload_file_btn():
     #     st.session_state.file_uploaded = True
     #     upload_file(uploaded_file)
 
-    if uploaded_file := st.sidebar.file_uploader("Upload File"):
-        feedback = upload_file(uploaded_file)
-        # print(feedback)
+    if uploaded_file := st.sidebar.file_uploader(
+        "Upload File", type=["pdf", "txt", "docx"]
+    ):
+        upload_file(uploaded_file)
+
 
 
 def select_llm_el():
@@ -140,7 +142,8 @@ def select_llm_el():
     select_llm(option)
 
 
-def session_init(avatar):
+def session_init():
+
     # st.session_state.messages = []
     # retrive_messages(avatar)
 
@@ -158,7 +161,7 @@ def main():
 
     user_email = st.session_state.email
 
-    session_init(avatar)
+    session_init()
 
     clear_messages_btn()
     retrive_messages_btn(avatar)
